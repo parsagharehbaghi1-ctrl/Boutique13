@@ -1,0 +1,1163 @@
+     1→---
+     2→Task ID: 1
+     3→Agent: Explore
+     4→Task: Thoroughly explore the Boutique13 static project to document all features for Next.js conversion
+     5→
+     6→Work Log:
+     7→- Read all HTML files: index.html, login.html, BoutiqueAuthExperience_2.html, product.html, MenCollection.html, contact.html, userdashboard.html
+     8→- Read all CSS files: css/style.css, css/navbar.css, css/product.css, css/cart.css, css/search.css, contact.css (root), MenCollection.css (root)
+     9→- Read all JS files: js/main.js, js/navbar.js, js/product.js, js/cart.js, js/men.js, js/search.js, js/wishlist.js, js/contact.js
+    10→- Listed image assets in img/ and img/products/
+    11→- Explored the React-based BoutiqueAuthExperience_2.html (1404-line single-file React 18 + Babel app)
+    12→- Discovered missing/inconsistent assets and dead links (documented in section O below)
+    13→
+    14→Stage Summary:
+    15→
+    16→# Boutique13 — Complete Project Documentation for Next.js Conversion
+    17→
+    18→## High-Level Overview
+    19→
+    20→Boutique13 (بوتیک ۱۳) is a **Persian/Farsi (RTL) boutique fashion e-commerce prototype**. It is a static HTML/CSS/JS site with no real backend — all state (cart, wishlist, auth) lives in `localStorage`. The site uses **GSAP 3.12.7 + ScrollTrigger** for animations and **Font Awesome 6.6.0** for icons. The design language is **dark luxury with gold (#D4AF37) accents** in most pages, although the homepage (index.html) uses a different (inconsistent) light/white theme.
+    21→
+    22→**IMPORTANT INCONSISTENCY:** `index.html` uses a LIGHT theme (white bg, Poppins font, blurred white header) — this is visually inconsistent with the rest of the site (MenCollection, contact, product, cart, search, navbar) which all use a DARK theme (black bg, Vazirmatn/Noto Serif Arabic fonts, gold accents). The Next.js version should reconcile this — the **dark + gold theme is the "real" brand identity**.
+    23→
+    24→The site is RTL (`dir="rtl"`, `lang="fa"`).
+    25→
+    26→---
+    27→
+    28→## A. Pages & Routes
+    29→
+    30→There are **7 HTML pages**. Note: 3 of the navbar links (women, shoes, accessories) point to files that **DO NOT EXIST** — they are dead links in the original.
+    31→
+    32→| # | File | Route (Next.js) | Purpose | Status |
+    33→|---|------|-----------------|---------|--------|
+    34→| 1 | `index.html` | `/` | Homepage with video hero, categories, latest products | Exists (light theme) |
+    35→| 2 | `MenCollection.html` | `/men` (or `/men-collection`) | Men's collection with category filter + product grid | Exists (dark theme) |
+    36→| 3 | `product.html` | `/product/[id]` | Single product detail page (reads `?id=` query param) | Exists (dark theme) |
+    37→| 4 | `contact.html` | `/contact` | Contact form + map links + social links + call card | Exists (dark theme) |
+    38→| 5 | `login.html` | `/login` | Login/Register/OTP auth (static, tag-switch UI) | Exists (paper/ink theme) |
+    39→| 6 | `BoutiqueAuthExperience_2.html` | `/auth` (alt) | **React 18 single-file** premium auth experience (login/signup/OTP/success) | Exists (dark luxury theme) |
+    40→| 7 | `userdashboard.html` | `/dashboard` | User profile dashboard (orders, addresses, wishlist) | Exists (paper/ink theme) |
+    41→
+    42→**Dead links referenced in code (pages NOT built):**
+    43→- `women.html` (navbar.js)
+    44→- `shoes.html` (navbar.js)
+    45→- `accessories.html` (navbar.js)
+    46→- `checkout.html` (cart.js — checkout button in cart drawer)
+    47→- `js/products-data.js` (referenced in MenCollection.html but the file does NOT exist)
+    48→
+    49→### A.1 Page-by-Page Structure
+    50→
+    51→#### index.html (Homepage — LIGHT theme, different from rest of site)
+    52→- **Loader overlay**: full-screen black `#loader` with white "BOUTIQUE 13" h1 (fades out via GSAP on window load)
+    53→- **Header** (inline, NOT the navbar.js version): fixed top, white blur bg, logo "Boutique13" text, nav links (خانه/مردانه/زنانه/اکسسوری/کفش/تماس), 3 icons (search/heart/bag — plain FA icons, non-functional)
+    54→- **Hero section**: full-screen `<video>` background (autoplay/muted/loop) with dark overlay, content "NEW COLLECTION 2026", h1 "BOUTIQUE13", Persian subtitle "استایل فقط لباس نیست؛ امضای شخصیت توئه.", CTA button "مشاهده کالکشن" linking to `#categories`, scroll-down indicator with bounce animation
+    55→- **Categories section** (`#categories`): h2 "دسته بندی", grid of 4 cards (مردانه/Men.jpg → MenCollection.html, زنانه/Woman.png, اکسسوری/accessories.jpg, کفش/images (3).jpg), each card 500px tall image with hover scale + h3 label overlay
+    56→- **Products section** (`.products`): h2 "جدیدترین محصولات", 3 hardcoded product cards (تیشرت مشکی 2,600,000 ت / شلوار جین 2,750,000 ت / کفش اسپرت 4,200,000 ت) — **note: these prices differ from product.html data**
+    57→- **Footer**: black bg, "BOUTIQUE13" h2, "تمامی حقوق محفوظ است © 2026"
+    58→- **Custom cursor**: two divs (`.cursor` 10px gold dot, `.cursor2` 45px gold ring) following mouse via GSAP
+    59→- Scripts: GSAP CDN, ScrollTrigger CDN, js/search.js, js/main.js
+    60→
+    61→#### MenCollection.html (Dark theme — main brand style)
+    62→- **Header injected by navbar.js** (not inline)
+    63→- **Hero section** (`.hero` with `#top`): bg `images/menHero.jpg` (DOES NOT EXIST), dark gradient overlay, heroTag (rotated -6deg "No. ۱۳ دست‌ساز، بی‌زمان" tag with dashed gold border + string), heroContent (kicker "کالکشن پاییز / زمستان", h1 "استایل مردانه" in Noto Serif Arabic, p "سادگی، کیفیت و استایل را یکجا تجربه کن.", gold pill button "مشاهده محصولات" → `#products`)
+    64→- **Marquee bar**: infinite-scrolling brand values "کیفیت پارچه • الگوی اختصاصی • تولید محدود • بوتیک ۱۳ •" (every 4th span gold, 26s linear animation, respects prefers-reduced-motion)
+    65→- **Categories filter** (`#categories`): row of pill buttons — همه(all, active) / تیشرت(tshirt) / شلوار(pants) / شلوارک(shorts) / کفش(shoes)
+    66→- **Products grid** (`#products`): 5 product cards, each with front/back image swap on hover, h3 name, price, gold "مشاهده محصول" button (navigates to `product.html?id=N`)
+    67→- **Footer** (`.siteFooter`): logoIcon "B" + "Boutique 13", tagline "استایل فقط لباس نیست، شخصیت توست.", copyright
+    68→- Scripts: js/navbar.js, js/men.js, js/search.js, js/wishlist.js, js/cart.js, js/product.js, js/products-data.js (MISSING), inline script for viewProduct button navigation
+    69→
+    70→#### product.html (Single product detail — Dark theme)
+    71→- **Cart drawer + overlay + search overlay** injected by cart.js (NOT navbar.js — navbar.js is explicitly excluded here per comment)
+    72→- **Inline search overlay** markup (`.searchOverlay` with `#searchInput`, `.closeSearch`, `.searchResults`) — duplicated from navbar.js
+    73→- **Product page** (`.productPage`): 2-column grid
+    74→  - **Left: gallery** (sticky): `.mainImage` (zoomable on mousemove, 650px tall), `.thumbs` row of 3 thumbnails (click to swap main image with fade)
+    75→  - **Right: details**: brand span "Boutique13" (gold), h1 product title, stars "★★★★★ (۲۴ نظر)", price (38px bold), description, size buttons (S/M/L/XL), color swatches (black/white/blue with `data-color` Persian attrs), actions row (gold "افزودن به سبد خرید" button + dark "❤" favorite button)
+    76→- **Hidden search index**: `<div class="productCard" data-id="1" data-name="تیشرت اورسایز" data-category="مردانه" data-price="1490000" data-color="مشکی" data-size="L XL" data-description="تیشرت اورسایز Premium" data-image="images/products/tshirt1.jpg" data-link="product.html?id=1">` — this is the search "database"
+    77→- **Inline script**: hardcoded `products` object with 5 products keyed by ID 1-5 (title/price/description/images array), reads `?id=` from URL, defaults to "1", dynamically updates title/mainImage/thumbs
+    78→- Scripts: js/cart.js, js/search.js, js/wishlist.js, js/product.js, inline product-data script
+    79→
+    80→#### contact.html (Dark theme)
+    81→- **Contact hero** (`.contactHero`): 65vh bg image `img/InShot_20260729_173055181_1920x1152.jpg`, dark overlay, content "GET IN TOUCH" (gold, letter-spaced) + h1 "تماس با بوتیک ۱۳" + subtitle
+    82→- **Contact container** (2-col grid): leftSide = `img/logo.jpg` (hover scale), rightSide = glass form card "ارسال پیام" with 4 floating-label inputs (نام و نام خانوادگی text / ایمیل email / شماره تماس tel / پیام شما textarea) + gold submit button with arrow icon
+    83→- **Call card** (`.call-card` `#callCard`): collapsible green WhatsApp-style button "تماس با بوتیک ۱۳" that toggles to reveal: phone 09918698146, support hours (شنبه تا جمعه 10:30 تا 21:30), store hours (10:30 باز / 21:30 بسته)
+    84→- **Navigation card** (`.navigationCard`): "Find Boutique13" with map buttons — نشان (nshn.ir/sbLxYN2AqgS3, green hover) + گوگل مپ (maps.app.goo.gl/6o4KGBAhxxFJVhzB8, Google-colored hover)
+    85→- **Social section** (`.socialSection`): 4 floating social cards (120×120) — Instagram (gradient hover), Telegram (#229ED9), WhatsApp (#25D366), Rubika (uses Rubika.jpg image, #074a75 hover). Each has shine sweep effect + float animation
+    86→- **Footer**: "BOUTIQUE 13" + "SEE YOU SOON"
+    87→- Scripts: GSAP + ScrollTrigger CDN, js/contact.js
+    88→- **Note**: contact.html does NOT use navbar.js — it has its own layout
+    89→
+    90→#### login.html (Paper/ink theme — different palette)
+    91→- **Stage grid** (2-col, max-width 920px): brandside (dark panel `#20201d` with diagonal stripe pattern) + formside (paper bg `#f4f1ea`)
+    92→- **Brandside**: brand-mark "■ فروشگاه پوشاک", brand-copy h1 "یک حساب کاربری، یک اندازه‌ی درست." + p "سایزها، سفارش‌ها و علاقه‌مندی‌های شما همیشه همراه‌تون می‌مونه...", brand-foot "— از ۲ دقیقه کمتر زمان می‌بره"
+    93→- **Tagswitch toggle** (signature element): bordered pill with sliding dark background, buttons "ورود" / "ثبت‌نام", small circle nub on the right edge
+    94→- **3 panes** (login / register / otp), only one `.active` at a time:
+    95→  - **Login pane**: eyebrow "خوش برگشتی", h2 "وارد حساب کاربری‌ات شو", form (شماره موبایل tel + رمز عبور password + row-between [checkbox مرا به خاطر بسپار / forgot link رمز عبور را فراموش کرده‌ام] + submit "ورود به حساب"), divider "یا", otp-alt button "ورود سریع با کد پیامکی", switch-note "حساب کاربری نداری؟ ثبت‌نام کن"
+    96→  - **Register pane**: eyebrow "عضویت جدید", h2 "حساب کاربری بساز", form (نام و نام‌خانوادگی text + شماره موبایل tel + رمز عبور password + terms text + submit "دریافت کد تایید"), switch-note "قبلاً ثبت‌نام کرده‌ای؟ وارد شو"
+    97→  - **OTP pane**: eyebrow "تایید هویت", h2 "کد تایید را وارد کن", desc "کد ۵ رقمی به شماره [phone] پیامک شد. ویرایش شماره", 5 digit inputs (auto-advance, backspace nav), submit "تایید و ورود", resend-row with countdown timer "ارسال مجدد کد تا MM:SS" + resend button (disabled until 119s countdown ends)
+    98→- **Inline script**: setMode() switches panes, register form submit → otp, otp-alt click → otp, edit-phone → register, OTP digit auto-advance, 119-second resend countdown timer
+    99→- **NO backend** — purely cosmetic, forms just `event.preventDefault()`
+   100→
+   101→#### BoutiqueAuthExperience_2.html (React 18 dark luxury auth — alt login)
+   102→- **Single-file React 18 app** (loaded via CDN: react, react-dom, @babel/standalone) — 1404 lines, source stored in `<script type="text/plain" id="b13-source">` and rendered into `#root`
+   103→- **Bilingual copy** (English headlines + Persian body): "MEMBER ACCESS / Welcome back. / به فضای شخصی خودت در Boutique13 برگرد." for login; "NEW MEMBER / Create yours. / یک هویت شخصی برای تجربه‌ی Boutique13 بساز." for signup; "SECURE ACCESS / Verify." for OTP; "IDENTITY VERIFIED / You're in. / ورود با موفقیت انجام شد." for success
+   104→- **AuthCard orchestrator** state: `mode` (login|signup), `view` (form|otp|success), `rotation` (3D flip), `flipping`, `morphing`, `tilt` (mouse tilt), `phone`, `password`, `name`, `phoneError`, `phoneShake`
+   105→- **Stages**: form (login or signup) → otp → success. Google sign-in skips OTP, goes straight to success
+   106→- **VisualPanel** (left side): brand-mark "BOUTIQUE13 / MEMBERS", corner "13 / IDENTITY", animated headline lines (mark "01"/"13" for login, "13" for signup, "0"/"13" for OTP, "13" for success), bottom "PRIVATE ACCESS · 013" / "ONE-TIME CODE · 013" / "IDENTITY VERIFIED · 013"
+   107→- **LoginView**: phone field (شماره موبایل, error "لطفاً شماره موبایل خود را وارد کنید"), password field (رمز عبور with eye toggle), ghost-link "ورود با کد تأیید / SMS / ONE-TIME CODE →", Google button "ادامه با Google", switch link "عضو Boutique13 نیستی؟ ساخت حساب"
+   108→- **SignupView**: name field, phone field, password field, switch link "قبلاً عضو شدی؟ ورود"
+   109→- **OTPView**: 6-digit inputs (NOT 5 like login.html), status state machine (idle|sending|sent|verifying|verified|error|expired), shake animation on error, 119s countdown, "کد وارد شده صحیح نیست." error, "در حال بررسی کد…" / "تأیید شد." status, resend button
+   110→- **SuccessView**: animated SVG ring (track + draw circles) with Check icon, "IDENTITY VERIFIED / You're in. / ورود با موفقیت انجام شد.", MagneticButton "ENTER BOUTIQUE13"
+   111→- **Animations**: 3D card flip on mode switch (360° rotateY), card tilt on mousemove (perspective), morph transition between form/otp/success, ambient background with sweep light, Mark13 brand mark, prefers-reduced-motion + (hover:hover) detection
+   112→- **MagneticButton**: button that follows cursor slightly (magnetic effect)
+   113→- **Fonts**: Playfair Display (display headings, italic supported), DM Sans (body), Vazirmatn (Persian)
+   114→- **Colors**: `--bg #0B0B0A`, `--bg2 #151412`, `--text #F4F1EA`, `--muted #96928A`, `--accent #C3A276` (muted gold), `--border rgba(244,241,234,0.12)`, `--err #C97A6C` (dusty red). Background is `radial-gradient(120% 140% at 50% 0%, #141311 0%, var(--bg) 55%, #060605 100%)`
+   115→- **NO backend** — all fake/demo. Comments explicitly say "DEMO ONLY: In production, replace with real Sign in with Google flow"
+   116→
+   117→#### userdashboard.html (Paper/ink theme — same palette as login.html)
+   118→- **Shell grid** (248px sidebar + 1fr main), responsive: sidebar becomes horizontal scroll nav on mobile (≤860px)
+   119→- **Sidebar** (dark `#20201d`): brand "■ فروشگاه پوشاک", who block (rust circle avatar "ع.ر" + name "علی رضایی" + phone "09123456789"), nav (نمای کلی active / سفارش‌ها / آدرس‌ها / علاقه‌مندی‌ها / اطلاعات حساب) each with dot indicator, side-foot "خروج از حساب"
+   120→- **Main**: page-head (eyebrow "نمای کلی", h1 "سلام، علی", sub "این خلاصه‌ی وضعیت حساب و سفارش‌های اخیرته")
+   121→- **Stat row** (3 stats): ۷ سفارش تا امروز / ۲ در مسیر ارسال / ۱۲ مورد علاقه‌مندی
+   122→- **Tickets section** (signature element — order tickets): 3 order tickets, each with:
+   123→  - ticket-top: order ID (#۱۰۴۲۸ / #۱۰۳۹۱ / #۱۰۴۵۰) + date (۱۴ مرداد ۱۴۰۴ / ۲ مرداد ۱۴۰۴ / امروز) + stamp badge (shipped ارسال شده / delivered تحویل شده / processing در حال آماده‌سازی) — stamps are rotated -2deg with colored borders
+   124→  - **stitch-track**: 4-step progress (ثبت سفارش / آماده‌سازی / ارسال / تحویل) with dashed line connector, done=ink, current=rust, future=line color
+   125→  - ticket-items: "۳ قلم — کاپشن جین، شلوار چینو، تیشرت بیسیک" etc.
+   126→  - ticket-side (with punched-circle cutouts top/bottom): total price + link (پیگیری مرسوله / ثبت نظر / جزئیات سفارش)
+   127→- **grid-2** (1.3fr 1fr):
+   128→  - **Addresses panel**: 2 saved addresses (پیش‌فرض / محل کار) with edit links
+   129→  - **Wishlist teaser**: 2×2 grid of wish-items (کاپشن بمبر / کفش چرم / پیراهن دو جیب / شلوار کتان) with dark overlay labels
+   130→- **All data is hardcoded** — purely a static mockup
+   131→
+   132→---
+   133→
+   134→## B. Visual Design
+   135→
+   136→### B.1 Brand Identity
+   137→- **Name**: Boutique13 (English) / بوتیک ۱۳ (Persian)
+   138→- **Logo**: text-based, "Boutique13" or "Boutique" + small gold "13"
+   139→- **Logo icon**: 48px square with 2px gold border, rounded 14px, contains letter "B" in gold. On hover: rotates -8deg and fills gold with black "B"
+   140→- **Logo image**: `img/logo.jpg` (14.7KB) — used only on contact page left side
+   141→- **Slogan (Persian)**: "استایل فقط لباس نیست؛ امضای شخصیت توئه." (Style isn't just clothing; it's the signature of your personality)
+   142→- **Slogan variant**: "استایل فقط لباس نیست، شخصیت توست." (used in MenCollection footer)
+   143→- **Recurring "13" motif**: tagNum "۱۳", "No. 13", "13 / IDENTITY", "PRIVATE ACCESS · 013", heroTag
+   144→
+   145→### B.2 Color Palettes (3 distinct palettes across the site)
+   146→
+   147→#### Palette 1: Dark Luxury Gold (MAIN brand — MenCollection, product, contact, cart, search, navbar)
+   148→```css
+   149→--gold: #D4AF37;        /* primary accent — buttons, links, prices, icons */
+   150→--goldHover: #E8C862;   /* lighter gold for hover */
+   151→--black: #0f0f0f;       /* page background */
+   152→--black2: #181818;      /* cards, inputs, secondary bg */
+   153→--white: #ffffff;
+   154→--gray: #8d8d8d;        /* muted text */
+   155→--light: #f5f5f5;
+   156→--border: #2d2d2d;      /* subtle borders */
+   157→--shadow: 0 15px 40px rgba(0,0,0,.25);
+   158→--radius: 18px;
+   159→--transition: .35s ease;
+   160→```
+   161→Plus ad-hoc: `#111` (cart bg), `#222`/`#242424` (button bg), `#262626` (borders), `#999`/`#aaa`/`#bdbdbd` (muted text variants), `#ff3355`/`#ff3b5f`/`#ff5757` (red for delete/heart), `#22c55e`/`#16a34a` (green for success), `#1e6eff` (blue swatch).
+   162→
+   163→Cursor color: `#d4af37` (gold).
+   164→
+   165→#### Palette 2: Paper/Ink Boutique (login.html + userdashboard.html — different aesthetic)
+   166→```css
+   167→--ink: #1c1b19;         /* near-black text */
+   168→--paper: #f4f1ea;       /* warm cream background */
+   169→--card: #ffffff;        /* white cards (dashboard only) */
+   170→--olive: #5f6a4c;       /* olive green accent */
+   171→--olive-dark: #454e37;  /* darker olive for links */
+   172→--rust: #a15630;        /* rust/terracotta accent (eyebrows, avatars, stamps) */
+   173→--line: #d8d2c4;        /* subtle cream borders */
+   174→--muted: #8a8477;       /* muted text */
+   175→--panel: #20201d;       /* dark sidebar/brand panel */
+   176→--amber: #b8863f;       /* amber for "processing" stamp (dashboard only) */
+   177→```
+   178→
+   179→#### Palette 3: BoutiqueAuthExperience_2 (React auth — darkest luxury)
+   180→```css
+   181→--bg: #0B0B0A;          /* near-black background */
+   182→--bg2: #151412;
+   183→--text: #F4F1EA;        /* warm cream text (same as paper) */
+   184→--muted: #96928A;
+   185→--accent: #C3A276;      /* muted/champagne gold (different from #D4AF37) */
+   186→--border: rgba(244,241,234,0.12);
+   187→--err: #C97A6C;         /* dusty red error */
+   188→```
+   189→Background: `radial-gradient(120% 140% at 50% 0%, #141311 0%, var(--bg) 55%, #060605 100%)`. Uses dark gradients `#1c1a17`/`#0c0b0a`/`#050504`.
+   190→
+   191→#### Palette 4: index.html (LIGHT theme — inconsistent with rest)
+   192→- White bg `#fff`, dark text `#111`
+   193→- Header `rgba(255,255,255,.75)` with backdrop-blur(15px)
+   194→- Hero overlay `rgba(0,0,0,.45)`
+   195→- Footer black `#000` with white text
+   196→- Gold cursor `#d4af37`
+   197→
+   198→#### Social brand colors (contact.css):
+   199→- Instagram gradient: `#FEDA75 → #FA7E1E → #D62976 → #962FBF → #4F5BD5`
+   200→- Telegram: `#229ED9`
+   201→- WhatsApp: `#25D366`
+   202→- Rubika: `#074a75`
+   203→- Neshan map: `#009944`
+   204→- Google map gradient: `#4285F4, #34A853, #FBBC05, #EA4335`
+   205→
+   206→### B.3 Typography
+   207→
+   208→| Font | Weights | Used In | Purpose |
+   209→|------|---------|---------|---------|
+   210→| **Poppins** | 300, 400, 500, 600, 700, 800 | index.html, contact.css | Original homepage + contact (Latin text) |
+   211→| **Vazirmatn** | 300, 400, 500, 600, 700, 800 | login.html, userdashboard.html, MenCollection.css, BoutiqueAuthExperience_2 | Persian UI text (primary Persian font) |
+   212→| **Noto Serif Arabic** | 500, 600, 700 | MenCollection.css | Persian display headings (hero h1, product h3) — "حس بوتیک/لوکس" |
+   213→| **Playfair Display** | 500, 600, italic 500 | BoutiqueAuthExperience_2 | English display headings (Welcome back / Create yours / Verify / You're in) |
+   214→| **DM Sans** | 400, 500, 600 | BoutiqueAuthExperience_2 | English body text |
+   215→
+   216→**Note**: Poppins was the original font but has NO Persian glyphs — that's why later pages switched to Vazirmatn. The Next.js version should standardize on **Vazirmatn (Persian) + Playfair Display or Noto Serif Arabic (display)**.
+   217→
+   218→### B.4 Iconography
+   219→- **Font Awesome 6.6.0** (CDN): used on index.html, product.html, contact.html
+   220→- **Inline SVG icons** (hand-drawn): used in navbar.js (search/heart/bag) and BoutiqueAuthExperience_2 (Eye, EyeOff, ArrowLeft, Check, Google logo) — no external icon dependency
+   221→- **Emoji**: 🗑 (delete in cart), ❤ (favorite button), ★★★★★ (stars), 😕 (no search results), ✔ (contact success)
+   222→
+   223→### B.5 Design Language Signatures
+   224→1. **Gold pill buttons** (border-radius: 50px, gold bg, black text, hover lift)
+   225→2. **Glass-morphism cards** (`rgba(255,255,255,.05)` + `backdrop-filter: blur(20px)` + 1px subtle border)
+   226→3. **Clothing-tag motifs**: heroTag (rotated dashed-border tag with string), cornerTag (rotated -45deg price tag), ticket-side (punched-circle cutouts like a raffle ticket), stamp badges (rotated -2deg with colored borders)
+   227→4. **Stitch-track progress**: dashed line connectors with node circles (dashboard order tracking)
+   228→5. **Marquee bar**: infinite horizontal scroll of brand values
+   229→6. **Front/back image swap** on product hover (MenCollection)
+   230→7. **3D tilt cards** on mousemove (MenCollection products via men.js)
+   231→8. **Custom gold cursor** (dot + ring) on index.html and contact.html
+   232→9. **Floating-label inputs** (contact form — label animates up on focus/valid)
+   233→10. **OTP digit auto-advance** inputs (login + React auth)
+   234→
+   235→---
+   236→
+   237→## C. Navigation Structure
+   238→
+   239→### C.1 Two Different Navbars
+   240→
+   241→The site has **TWO different header implementations**:
+   242→
+   243→#### Navbar 1: Inline (index.html only — LIGHT theme)
+   244→- Fixed top, 80px tall, white blur bg `rgba(255,255,255,.75)`, backdrop-filter blur(15px), padding 0 8%
+   245→- Left: `.logo` text "Boutique13" (28px bold)
+   246→- Center: `<nav>` with 6 links (خانه/مردانه/زنانه/اکسسوری/کفش/تماس), gap 40px, hover color #888
+   247→- Right: `.icons` 3 Font Awesome icons (fa-magnifying-glass, fa-regular fa-heart, fa-solid fa-bag-shopping) — **non-functional, just decorative**
+   248→- main.js adds scroll effect: >80px → bg `rgba(255,255,255,.95)` + box-shadow
+   249→- Responsive: nav hidden ≤992px (NO mobile menu — just hidden!)
+   250→
+   251→#### Navbar 2: navbar.js-injected (Dark theme — used by MenCollection.html and product.html via cart.js)
+   252→- Fixed top:20px, centered (left:50% transform:translateX(-50%)), width 92% max 1400px, 80px tall, border-radius:25px
+   253→- Background `rgba(20,20,20,.55)` + backdrop-blur(18px) + 1px white/0.08 border + box-shadow
+   254→- **Scrolled state** (>40px scroll): top:12px, height:68px, bg `rgba(12,12,12,.82)`, stronger shadow
+   255→- Left: `.logo` (logoIcon 48px gold-bordered "B" + logoText "Boutique" + small gold "13") — logoIcon rotates -8deg + fills gold on hover
+   256→- Center: `.navbar` with 6 links (خانه/مردانه/زنانه/کفش/اکسسوری/تماس با ما), gap 38px, gold underline animation on hover/active
+   257→- Right: `.navIcons` — 4 round 46px buttons (search, wishlist with #wishCount badge, cart with #cartCount badge, menuToggle hamburger)
+   258→  - Each icon button: dark `#181818` bg, white icon, hover → gold bg + black icon + translateY(-5px)
+   259→  - Badges: 20px gold circle, black text, top:-6px right:-4px
+   260→- **Mobile menu** (`.mobileMenu`): fullscreen `rgba(10,10,10,.97)` overlay, centered column, 24px links, staggered fade-in (50ms delay per link), hamburger animates to X
+   261→- **Hamburger** (`.menuToggle`): 3 spans, hidden on desktop (display:flex only ≤900px), animates to X when `.open`
+   262→- **Search overlay** (`.searchOverlay`): fullscreen `rgba(0,0,0,.92)` blur, centered searchBox (700px max 90%), 72px tall input with gold 80px search button, close button 55px circle top-right (rotates 90deg on hover)
+   263→
+   264→**Responsive breakpoints**: ≤900px — hide `.navbar`, show `.menuToggle`
+   265→
+   266→### C.2 Active Link Detection
+   267→navbar.js `currentPage()` reads `location.pathname.split("/").pop()` (defaults to "index.html" for root) and adds `.active` class to matching link. Note: navbar.js has TWO versions of the `links` array (lines 20-27 use `MenCollection.html`, lines 20-27 in cart.js use `men.html`) — **inconsistency**.
+   268→
+   269→### C.3 Menu Links (canonical list)
+   270→1. خانه (Home) → index.html
+   271→2. مردانه (Men) → MenCollection.html
+   272→3. زنانه (Women) → women.html **[MISSING]**
+   273→4. کفش (Shoes) → shoes.html **[MISSING]**
+   274→5. اکسسسوری (Accessories) → accessories.html **[MISSING]**
+   275→6. تماس با ما (Contact) → contact.html
+   276→
+   277→### C.4 Pages WITHOUT navbar.js
+   278→- index.html (uses inline navbar 1)
+   279→- contact.html (no navbar at all — standalone layout)
+   280→- login.html (no navbar — standalone auth)
+   281→- BoutiqueAuthExperience_2.html (no navbar — standalone auth)
+   282→- userdashboard.html (no navbar — has its own sidebar)
+   283→
+   284→So navbar.js is only used on MenCollection.html and product.html (via cart.js).
+   285→
+   286→---
+   287→
+   288→## D. Product Features
+   289→
+   290→### D.1 Product Data Model
+   291→
+   292→Each product has these fields (derived from data attributes in product.html + products object in inline script + MenCollection.html cards):
+   293→
+   294→```javascript
+   295→{
+   296→  id: number | string,          // "1" through "5"
+   297→  name: string,                 // Persian name e.g. "تیشرت اورسایز مشکی Premium"
+   298→  title: string,                // alias for name (used in product.html inline script)
+   299→  price: number,                // in Toman (Iranian currency) e.g. 1490000
+   300→  priceFormatted: string,       // Persian-formatted e.g. "۱,۴۹۰,۰۰۰ تومان"
+   301→  category: string,             // "tshirt" | "pants" | "shorts" | "shoes" | "مردانه"
+   302→  description: string,          // Persian description
+   303→  images: string[],             // array of image paths (gallery)
+   304→  image: string,                // main image (single)
+   305→  color: string,                // selected color (Persian: "مشکی"/"سفید"/"آبی")
+   306→  size: string,                 // selected size ("S"/"M"/"L"/"XL")
+   307→  sizes: string[],              // available sizes ["S","M","L","XL"]
+   308→  colors: Array<{name, hex}>,   // available colors with hex
+   309→  link: string,                 // "product.html?id=1"
+   310→  brand: string,                // "Boutique13"
+   311→  rating: number,               // 5 stars (hardcoded)
+   312→  reviewCount: number,          // 24 reviews (hardcoded)
+   313→  qty: number                   // cart quantity (added when in cart)
+   314→}
+   315→```
+   316→
+   317→### D.2 Product Card Design (MenCollection.html — `.product`)
+   318→
+   319→```
+   320→┌─────────────────────────────────┐
+   321→│  [front image]                  │  ← .productImage (380px tall)
+   322→│  [back image — opacity 0]       │     front fades out, back fades in on hover
+   323→│                                 │     image scales 1.08 on hover
+   324→├─────────────────────────────────┤
+   325→│  [eyebrow — optional]           │  ← .productInfo (padding 22px, translateZ(25px) for 3D)
+   326→│  Product Name (Noto Serif)      │     h3 turns gold on hover
+   327→│  ۱,۴۹۰,۰۰۰ تومان (gold, 22px)   │     p turns white on hover
+   328→│  [مشاهده محصول button]           │     button slides up on hover (opacity 0 → 1)
+   329→└─────────────────────────────────┘
+   330→```
+   331→- Card bg: `rgba(255,255,255,.03)` + backdrop-blur(12px) + 1px white/0.08 border, border-radius 22px
+   332→- Entry animation: opacity 0 + translateY(80px) → fade up (`.8s forwards`)
+   333→- Hover: box-shadow `0 20px 40px rgba(0,0,0,.35)`, gold border via `::after`, shine sweep via `::before` (rotated 25deg gradient)
+   334→- **3D tilt on mousemove** (men.js): perspective(1200px) + rotateX/rotateY based on cursor position + translateY(-10px) + scale(1.02)
+   335→- Categories filter: pill buttons (همه/تیشرت/شلوار/شلوارک/کفش), active = gold bg, filters by `data-category` attr (show/hide only, no re-render)
+   336→
+   337→### D.3 Product Detail Page Layout (product.html)
+   338→
+   339→**2-column grid** (`.productPage`, 90% width, 70px gap, margin 140px auto 80px):
+   340→
+   341→**Left column — Gallery** (`.gallery`, sticky top:120px):
+   342→- `.mainImage`: 650px tall, bg #181818, border-radius 22px, **zoom on mousemove** (transform-origin follows cursor, scale 1.4)
+   343→- `.thumbs`: row of 3 thumbnails (100×120px, border-radius 14px, transparent 2px border), hover → gold border + translateY(-6px), active → gold border, click → fades main image and swaps src
+   344→
+   345→**Right column — Details** (`.details`):
+   346→- `.brand` span "Boutique13" (gold, letter-spaced 3px, 15px)
+   347→- `<h1>` product title (46px, line-height 1.3)
+   348→- `.stars`: "★★★★★" (gold, 20px) + span "(۲۴ نظر)" (gray, 15px)
+   349→- `.price`: 38px bold
+   350→- `.description`: gray #bdbdbd, line-height 2
+   351→- `<h3>انتخاب سایز` + `.sizes` row of 4 buttons (55×55px, border-radius 12px, dark bg, hover/active → gold bg + black text + scale 1.08)
+   352→- `<h3>رنگ` + `.colors` row of 3 swatches (34×34px circles, 3px white border, hover → scale 1.15, selected → scale 1.2 + gold ring). Each has `data-color` Persian attr: black="مشکی", white="سفید", blue="آبی"
+   353→- `.actions` row: `.addtocart` button (flex:1, 60px tall, gold gradient bg `linear-gradient(135deg,#D4AF37,#e9cc6e)`, black text, gold box-shadow, hover → white bg + translateY(-5px)) + `.favorite` button (60px square, dark bg, ❤ icon, liked state → red #ff3355 + heartBeat animation)
+   354→
+   355→### D.4 Add-to-Cart Validation (product.js)
+   356→- User MUST select color AND size before adding — `alert("رنگ را انتخاب کنید.")` / `alert("سایز را انتخاب کنید.")` if missing
+   357→- On success: button gets `.added` class (black bg + green check), shows animated SVG checkmark + "افزوده شد" text for 1.6s, then reverts
+   358→
+   359→### D.5 Product Image Zoom (product.js)
+   360→- On mousemove over `.mainImage`: calculates x/y % and sets `transformOrigin` + `transform: scale(1.4)`
+   361→- On mouseleave: resets to center + scale(1)
+   362→
+   363→---
+   364→
+   365→## E. Cart Functionality
+   366→
+   367→### E.1 Architecture
+   368→- **Class `ShoppingCart`** defined in `js/cart.js` (lines 162-316), instantiated as `const shoppingCart = new ShoppingCart();` (global)
+   369→- **Storage**: `localStorage` key `"cart"`, value is `JSON.stringify(items)` array
+   370→- **Note**: cart.js ALSO contains the full navbar.js code (it's a combined file — the navbar injection + ShoppingCart class are both in cart.js). This is why product.html loads cart.js WITHOUT navbar.js.
+   371→
+   372→### E.2 Cart Data Structure
+   373→```javascript
+   374→// localStorage "cart" = JSON array of:
+   375→[
+   376→  {
+   377→    id: 1,                    // product id (number)
+   378→    name: "تیشرت اورسایز Premium",
+   379→    price: 1490000,           // number, in Toman
+   380→    image: "img/products/tshirt (2).jpg",
+   381→    color: "مشکی",            // selected color (Persian)
+   382→    size: "L",                // selected size
+   383→    qty: 1                    // quantity (incremented if same id+color+size)
+   384→  },
+   385→  // ...
+   386→]
+   387→```
+   388→
+   389→### E.3 Cart Item Identity
+   390→Items are considered the **same** (and qty incremented) if `id === product.id && color === product.color && size === product.size`. Otherwise a new line item is added.
+   391→
+   392→### E.4 Cart UI (drawer — injected by cart.js/navbar.js)
+   393→```
+   394→┌──────────────────────────────────┐
+   395→│ سبد خرید                    ✕    │  ← .cartHead (22px padding, border-bottom #262626)
+   396→├──────────────────────────────────┤
+   397→│ [img]  Product Name              │  ← .cartItem (72×88px img, gap 14px, border-bottom #232323)
+   398→│        مشکی - L                  │     .cartInfo: h3 (15px white) + small (12px gray)
+   399→│        ۱,۴۹۰,۰۰۰ تومان           │     + p (gold, 14px) + .quantity controls
+   400→│        [-] 1 [+]            🗑   │     .deleteItem (30px circle, top:16px left:0, hover #ff5757)
+   401→│                                  │
+   402→│ [next item...]                   │
+   403→├──────────────────────────────────┤
+   404→│ جمع کل:        ۱,۴۹۰,۰۰۰ تومان   │  ← .cartFoot (20px 22px 26px padding, border-top)
+   405→│ [    تسویه حساب    ]             │     .checkoutBtn (gold pill, links to checkout.html [MISSING])
+   406→└──────────────────────────────────┘
+   407→```
+   408→- `.cart`: fixed right:-430px (off-screen), width 420px, height 100vh, bg #111, slides in with `right:0` transition (`.55s cubic-bezier(.19,1,.22,1)`)
+   409→- `.cart.active`: animation `cartOpen` (scale .96→1, opacity 0→1)
+   410→- `.cartOverlay`: fullscreen `rgba(0,0,0,.55)` + blur(6px), click closes cart
+   411→- Empty state: `.emptyCart` "سبد خرید شما خالی است." (60px padding, gray text)
+   412→- `.cartBody` scrollbar: 6px gold thumb
+   413→- Responsive ≤480px: `.cart` width 100%
+   414→
+   415→### E.5 Cart Methods
+   416→```javascript
+   417→class ShoppingCart {
+   418→  constructor()          // loads from localStorage, grabs DOM refs, calls init()
+   419→  init()                 // renders, binds cartBtn/closeBtn/overlay/bodyEl click events
+   420→  open()                 // adds .active to .cart + .cartOverlay
+   421→  close()                // removes .active
+   422→  addProduct(product)    // finds existing by id+color+size, increments qty or pushes new, saves, renders, opens, bounceIcon()
+   423→  changeQty(index, delta) // adjusts qty, removes if qty<=0
+   424→  removeItem(index)      // splices item, saves, renders
+   425→  save()                 // localStorage.setItem("cart", JSON.stringify(items))
+   426→  getTotal()             // sum of price*qty
+   427→  bounceIcon()           // restarts cartBounce animation on cartBtn
+   428→  render()               // updates #cartCount badge, .totalPrice, and .cartBody innerHTML
+   429→}
+   430→```
+   431→
+   432→### E.6 Quantity Controls
+   433→- `.quantity` row: `[-]` decrease button (26px circle) + `<span>` qty + `[+]` increase button
+   434→- Buttons have gold hover
+   435→- Decrease past 0 removes the item
+   436→
+   437→### E.7 Cart Badge
+   438→- `#cartCount` span in navbar.js-injected cart button (20px gold circle, black text)
+   439→- Shows total qty (sum of all item.qty), hidden if 0 (`display:none`)
+   440→- `.cartBounce` animation: scale 1→1.25→.92→1 (.4s) — triggered on every addProduct
+   441→
+   442→### E.8 Number Formatting
+   443→Prices use `.toLocaleString("fa-IR")` for Persian digits + thousand separators, appended with " تومان". E.g. `1490000` → `"۱,۴۹۰,۰۰۰ تومان"`.
+   444→
+   445→---
+   446→
+   447→## F. Wishlist
+   448→
+   449→### F.1 Architecture
+   450→- **Class `Wishlist`** in `js/wishlist.js`, instantiated as `const wishlist = new Wishlist();` (global)
+   451→- **Storage**: `localStorage` key `"wishlist"`, JSON array of `{id, name, image, price}`
+   452→
+   453→### F.2 Wishlist Data Structure
+   454→```javascript
+   455→[
+   456→  {
+   457→    id: 1,
+   458→    name: "تیشرت اورسایز Premium",
+   459→    image: "img/products/tshirt (2).jpg",   // grabbed from #mainImage.src
+   460→    price: 1490000
+   461→  }
+   462→]
+   463→```
+   464→**LIMITATION**: The wishlist is currently **hardcoded to product id=1** — the toggle() method always creates a product object with id:1 and the hardcoded name/price. It doesn't read from a product database. This needs to be fixed in Next.js.
+   465→
+   466→### F.3 Toggle Logic
+   467→```javascript
+   468→toggle(button) {
+   469→  // Creates product object (HARDCODED id:1)
+   470→  // Finds index by id
+   471→  // If exists: remove from items, remove .liked class, toast "از علاقه‌مندی حذف شد."
+   472→  // If not exists: push to items, add .liked class, toast "به علاقه‌مندی اضافه شد."
+   473→  // save() + updateBadge()
+   474→}
+   475→```
+   476→
+   477→### F.4 UI
+   478→- Triggered by `.favorite` buttons (the ❤ button on product.html)
+   479→- `.favorite.liked` state: red bg #ff3355, heartBeat animation (scale 1→1.35→.9→1.2→1)
+   480→- Badge: `#wishCount` in navbar.js-injected wishBtn (20px gold circle)
+   481→- **No dedicated wishlist page** — only the badge count + dashboard wishlist teaser (4 hardcoded items)
+   482→
+   483→### F.5 Toast Notifications
+   484→- `.toast`: fixed bottom:35px, centered, dark bg #111, white text, 14px border-radius, blur backdrop
+   485→- Animation: opacity 0 + translateY(50px) → opacity 1 + translateY(0) (.4s)
+   486→- Auto-dismiss after 1.8s
+   487→- Created dynamically if it doesn't exist (`document.createElement("div")`)
+   488→
+   489→---
+   490→
+   491→## G. Search
+   492→
+   493→### G.1 Architecture
+   494→- **`js/search.js`** — vanilla JS, reads from DOM elements with class `.productCard`
+   495→- **NO separate products database** — search indexes hidden `.productCard` divs with data attributes
+   496→- Search overlay is injected by navbar.js OR exists inline (product.html)
+   497→
+   498→### G.2 Search Index (Hidden DOM Pattern)
+   499→Search reads from elements like:
+   500→```html
+   501→<div class="productCard"
+   502→     data-id="1"
+   503→     data-name="تیشرت اورسایز"
+   504→     data-category="مردانه"
+   505→     data-price="1490000"
+   506→     data-color="مشکی"
+   507→     data-size="L XL"
+   508→     data-description="تیشرت اورسایز Premium"
+   509→     data-image="images/products/tshirt1.jpg"
+   510→     data-link="product.html?id=1">
+   511→</div>
+   512→```
+   513→**BUG**: MenCollection.html products use class `.product` (NOT `.productCard`), so search.js doesn't index them. Only product.html has the hidden `.productCard` div. The Next.js version should use a proper product database/search API instead.
+   514→
+   515→### G.3 Search Features
+   516→- **Open**: click `.searchBtn` → adds `.active` to `.searchOverlay`, focuses input after 250ms, calls `renderPopular()`
+   517→- **Close**: click `.closeSearch` / click overlay backdrop / press Escape
+   518→- **Live search**: debounced 200ms on input
+   519→- **Persian normalization**: converts `ي→ی`, `ك→ک`, lowercases, trims whitespace
+   520→- **Searchable fields**: name + category + color + size + description (concatenated, normalized, checked with `.includes()`)
+   521→- **Highlight matches**: wraps matched substring in `<mark>` (gold-tinted background `rgba(212,175,55,.18)`, gold text, 4px border-radius)
+   522→
+   523→### G.4 Search Result Item
+   524→```
+   525→┌──────────────────────────────────────────┐
+   526→│ [img 80×95px]  Product Name (highlighted) │  ← .searchItem (18px padding, gap 18px, hover bg #222)
+   527→│                category (gray)            │     animation: fadeResult (.25s, translateY 8→0)
+   528→│                ۱,۴۹۰,۰۰۰ تومان (gold)     │
+   529→└──────────────────────────────────────────┘
+   530→```
+   531→Each result is an `<a>` linking to `product.html?id=N`. Result is clickable.
+   532→
+   533→### G.5 Popular Searches (empty state)
+   534→When input is empty, shows "محبوب‌ترین جستجوها" with 4 pill tags: تیشرت / شلوار / کفش / اکسسسوری. Clicking a tag fills the input and triggers search.
+   535→
+   536→### G.6 No Results State
+   537→```
+   538→       😕 (48px emoji)
+   539→   محصولی پیدا نشد (white h3)
+   540→   دوباره امتحان کنید (gray p)
+   541→```
+   542→
+   543→### G.7 Search UI Styling
+   544→- `.searchOverlay`: fullscreen `rgba(0,0,0,.45)` + blur(12px), padding-top 90px, fade in .35s
+   545→- `.searchBox`: max-width 750px, bg #181818, 1px white/0.08 border, border-radius 22px, box-shadow, slides down + scales in (translateY(-40px) scale(.96) → 0/1)
+   546→- `.searchHeader`: 20px padding, border-bottom #2b2b2b, input 18px white, close button 45px circle
+   547→- `.searchResults`: max-height 500px, scrollable, 7px gold scrollbar
+   548→- `.popularTag`: pill (999px radius), #222 bg, 1px #333 border, hover → gold bg + black text + translateY(-3px)
+   549→
+   550→---
+   551→
+   552→## H. Authentication
+   553→
+   554→### H.1 Two Auth Implementations
+   555→
+   556→There are **TWO different auth pages**:
+   557→
+   558→#### Auth 1: `login.html` (static, Paper/Ink theme — simpler)
+   559→- **3 panes** toggled by `setMode(mode, phone)`: login / register / otp
+   560→- **Tagswitch toggle**: bordered pill with sliding dark background, "ورود" / "ثبت‌نام" buttons
+   561→- **Login form**: شماره موبایل (tel, placeholder "09xxxxxxxxx") + رمز عبور (password) + row-between [checkbox "مرا به خاطر بسپار" / "رمز عبور را فراموش کرده‌ام" link] + submit "ورود به حساب"
+   562→- **Register form**: نام و نام‌خانوادگی (text, placeholder "مثلاً علی رضایی") + شماره موبایل (tel) + رمز عبور (password, placeholder "حداقل ۸ کاراکتر") + terms text + submit "دریافت کد تایید"
+   563→- **OTP pane**: 5 digit inputs (44×52px, 18px font, LTR direction), "کد ۵ رقمی به شماره [phone] پیامک شد. ویرایش شماره", submit "تایید و ورود", 119-second countdown "ارسال مجدد کد تا MM:SS" + disabled resend button (enabled when timer hits 0)
+   564→- **OTP digit behavior**: auto-advance on input (digits only), backspace navigates to previous
+   565→- **NO backend** — all `event.preventDefault()`, purely cosmetic
+   566→- **Brand side** (left, dark): "فروشگاه پوشاک", h1 "یک حساب کاربری، یک اندازه‌ی درست.", p "سایزها، سفارش‌ها و علاقه‌مندی‌های شما همیشه همراه‌تون می‌مونه. کافیه یک‌بار وارد بشید.", "— از ۲ دقیقه کمتر زمان می‌بره"
+   567→
+   568→#### Auth 2: `BoutiqueAuthExperience_2.html` (React 18, dark luxury — premium)
+   569→- **Single-file React app** (1404 lines) loaded via CDN (react@18, react-dom@18, @babel/standalone)
+   570→- **Bilingual** (English headlines + Persian body)
+   571→- **4 views**: form (login|signup) → otp → success
+   572→- **3D card flip** on mode switch (360° rotateY, swap content at 50% of rotation)
+   573→- **Card tilt** on mousemove (perspective + rotateX/rotateY based on cursor)
+   574→- **Morph transition** between form/otp/success (380ms)
+   575→- **LoginView**: phone field (شماره موبایل, with error shake if empty) + password field (رمز عبور with eye toggle) + ghost-link "ورود با کد تأیید / SMS / ONE-TIME CODE →" + Google button "ادامه با Google" (multicolor G logo) + switch "عضو Boutique13 نیستی؟ ساخت حساب"
+   576→- **SignupView**: name field + phone field + password field + switch "قبلاً عضو شدی؟ ورود"
+   577→- **OTPView**: **6 digit inputs** (not 5 like login.html), status state machine (idle/sending/sent/verifying/verified/error/expired), shake on error, 119s countdown, "کد وارد شده صحیح نیست." error
+   578→- **SuccessView**: animated SVG ring (track + draw circles, stroke-dashoffset animation) with Check icon, "IDENTITY VERIFIED / You're in. / ورود با موفقیت انجام شد.", MagneticButton "ENTER BOUTIQUE13"
+   579→- **AmbientBackground**: SVG noise filter (`<feTurbulence>`) + radial vignette + sweep light (animates during flip)
+   580→- **Mark13**: large brand mark showing "01"/"13" or "13" or "0"/"13" depending on stage
+   581→- **VisualPanel** (left): brand-mark "BOUTIQUE13 / MEMBERS", corner "13 / IDENTITY", animated headline lines, "PRIVATE ACCESS · 013" / "ONE-TIME CODE · 013" / "IDENTITY VERIFIED · 013"
+   582→- **MagneticButton**: button that magnetically follows cursor
+   583→- **Accessibility**: respects `prefers-reduced-motion` and `(hover: hover) and (pointer: fine)` media queries
+   584→- **DEMO ONLY** — comments explicitly say replace Google flow with real OAuth in production
+   585→- **Field components**: `Field` (text input with icon, focus state, error message) and `PasswordField` (extends Field with eye toggle)
+   586→
+   587→### H.2 Auth Fields Summary
+   588→
+   589→| Field | login.html | BoutiqueAuthExperience_2 |
+   590→|-------|------------|--------------------------|
+   591→| Login phone | ✓ (tel, 09xxxxxxxxx) | ✓ (tel, with error shake) |
+   592→| Login password | ✓ (password) | ✓ (password + eye toggle) |
+   593→| Login OTP | 5 digits | 6 digits |
+   594→| Signup name | ✓ (text, "مثلاً علی رضایی") | ✓ (text) |
+   595→| Signup phone | ✓ (tel) | ✓ (tel) |
+   596→| Signup password | ✓ (password, "حداقل ۸ کاراکتر") | ✓ (password + eye toggle) |
+   597→| Google login | ✗ | ✓ (multicolor button) |
+   598→| Forgot password | ✓ (link, non-functional) | ✗ |
+   599→| Remember me | ✓ (checkbox) | ✗ |
+   600→| Resend timer | 119s | 119s |
+   601→
+   602→### H.3 No Real Auth
+   603→Both pages are **purely cosmetic** — no actual authentication, no token, no session. Forms just `event.preventDefault()`. The Next.js version should implement real auth (NextAuth.js or similar) with phone+OTP via SMS provider.
+   604→
+   605→---
+   606→
+   607→## I. User Dashboard
+   608→
+   609→### I.1 Layout (userdashboard.html — Paper/Ink theme)
+   610→- **Shell**: 248px sidebar + 1fr main grid, full viewport height
+   611→- **Sidebar** (dark `#20201d`, 28px 22px padding):
+   612→  - Brand "■ فروشگاه پوشاک" (13px, letter-spaced)
+   613→  - Who block: 42px rust circle avatar "ع.ر" + name "علی رضایی" + phone "09123456789" (LTR)
+   614→  - Nav (column, gap 2px): 5 links (نمای کلی active / سفارش‌ها / آدرس‌ها / علاقه‌مندی‌ها / اطلاعات حساب), each with 5px dot indicator, active = paper bg + ink text + rust dot
+   615→  - Side-foot: "خروج از حساب" link
+   616→- **Main** (36px 40px 60px padding):
+   617→  - Page-head: eyebrow "نمای کلی" (rust) + h1 "سلام، علی" (26px) + sub "این خلاصه‌ی وضعیت حساب و سفارش‌های اخیرته"
+   618→  - **Stat row** (3 cols, 14px gap): ۷ سفارش تا امروز / ۲ در مسیر ارسال / ۱۲ مورد علاقه‌مندی (24px bold number + 12.5px muted label)
+   619→  - **Recent orders** (`.tickets`): section-title "سفارش‌های اخیر" (with ::after line filler), 3 order tickets
+   620→  - **grid-2** (1.3fr 1fr): Addresses panel + Wishlist teaser
+   621→
+   622→### I.2 Order Ticket (Signature Element)
+   623→```
+   624→┌─────────────────────────────────────┬──────────────┐
+   625→│ سفارش #۱۰۴۲۸       [ارسال شده]      │              │  ← stamp rotated -2deg
+   626→│ ۱۴ مرداد ۱۴۰۴                       │  ۴,۲۸۰,۰۰۰   │
+   627→│                                     │  تومان       │
+   628→│ ●─────●─────●─────○                 │              │  ← stitch-track (dashed)
+   629→│ ثبت   آماده‌سازی  ارسال  تحویل        │ پیگیری مرسوله │
+   630→│                                     │              │
+   631→│ ۳ قلم — کاپشن جین، شلوار چینو، ...   │              │
+   632→└─────────────────────────────────────┴──────────────┘
+   633→         ↑ punched circles at top/bottom of divider
+   634→```
+   635→- **Stamps** (3 states): `.stamp.shipped` (olive-dark #454e37), `.stamp.delivered` (olive #5f6a4c), `.stamp.processing` (amber #b8863f) — all rotated -2deg, 1.5px border, 20px border-radius
+   636→- **Stitch-track**: 4 steps (ثبت سفارش / آماده‌سازی / ارسال / تحویل), each with 11px node circle. States: done (ink #1c1b19), current (rust #a15630), future (line #d8d2c4). Dashed line connectors between steps.
+   637→- **ticket-side**: dashed left border, 20px 22px padding, punched-circle cutouts (`::before`/`::after` 14px paper circles at top/bottom right)
+   638→- **3 sample orders**: #۱۰۴۲۸ shipped (۳ قلم, ۴,۲۸۰,۰۰۰) / #۱۰۳۹۱ delivered (۱ قلم, ۱,۱۵۰,۰۰۰) / #۱۰۴۵۰ processing today (۲ قلم, ۳,۹۰۰,۰۰۰)
+   639→
+   640→### I.3 Addresses Panel
+   641→- 2 saved addresses:
+   642→  - پیش‌فرض (rust tag): "تهران، خیابان ولیعصر، بالاتر از پارک وی، پلاک ۱۲، واحد ۳"
+   643→  - محل کار (muted tag): "تهران، سعادت‌آباد، خیابان علامه، برج نگین، طبقه ۵"
+   644→- Each row has "ویرایش" edit link
+   645→
+   646→### I.4 Wishlist Teaser
+   647→- 2×2 grid of `.wish-item` (3:4 aspect ratio, beige #e8e3d6 bg)
+   648→- 4 hardcoded items: کاپشن بمبر / کفش چرم / پیراهن دو جیب / شلوار کتان
+   649→- Each has dark overlay label at bottom (`rgba(28,27,25,0.72)` bg, paper text)
+   650→
+   651→### I.5 All Data Hardcoded
+   652→Everything in the dashboard is static — no real user data, no real orders. Next.js version should fetch from database.
+   653→
+   654→---
+   655→
+   656→## J. Contact Page
+   657→
+   658→### J.1 Sections (top to bottom)
+   659→
+   660→1. **Contact Hero** (`.contactHero`, 65vh): bg image `img/InShot_20260729_173055181_1920x1152.jpg`, dark overlay `rgba(0,0,0,.55)`, centered content — "GET IN TOUCH" (gold, letter-spaced 5px) + h1 "تماس با بوتیک ۱۳" (70px) + p "ما همیشه آماده شنیدن نظرات، پیشنهادات و سوالات شما هستیم."
+   661→
+   662→2. **Contact Container** (2-col grid, 90% width, 80px gap, 120px margin):
+   663→   - **Left**: `img/logo.jpg` (border-radius 25px, hover scale 1.04)
+   664→   - **Right** (glass card): h2 "ارسال پیام" (35px) + form with 4 floating-label inputs + gold submit button with arrow icon
+   665→   - Form fields: نام و نام خانوادگی (text, required) / ایمیل (email, required) / شماره تماس (tel, required) / پیام شما (textarea, required, 140px tall)
+   666→   - Floating labels: position absolute, animate up + turn gold on focus/valid
+   667→
+   668→3. **Call Card** (`.call-card` `#callCard`): collapsible, max-width 650px, centered, 60px margin
+   669→   - Button "📞 تماس با بوتیک ۱۳" (green #25D366, 18px padding)
+   670→   - Toggle via `toggleCallCard()` (defined in contact.js) — adds `.active` class
+   671→   - Expanded content (max-height 0 → 500px transition):
+   672→     - 📞 شماره تماس: 09918698146
+   673→     - 🎧 ساعات پاسخگویی: شنبه تا جمعه / 10:30 تا 21:30
+   674→     - 🏪 ساعات کاری فروشگاه: باز: 10:30 / بسته: 21:30
+   675→
+   676→4. **Navigation Card** (`.navigationCard`): glass card, centered
+   677→   - 90px circle icon (gold location pin, floating animation)
+   678→   - h3 "Find Boutique13"
+   679→   - p "انتخاب کنید با کدام برنامه می‌خواهید مسیر را مشاهده کنید."
+   680→   - 2 map buttons: نشان (green hover, links to nshn.ir/sbLxYN2AqgS3) + گوگل مپ (Google gradient hover, links to maps.app.goo.gl/6o4KGBAhxxFJVhzB8)
+   681→
+   682→5. **Social Section** (`.socialSection`): 4 social cards (120×120, flex-wrap, 35px gap)
+   683→   - Instagram (gradient hover #FEDA75→#4F5BD5)
+   684→   - Telegram (#229ED9 hover)
+   685→   - WhatsApp (#25D366 hover)
+   686→   - Rubika (uses Rubika.jpg image, #074a75 hover)
+   687→   - Each: glass bg, 42px gold icon (or Rubika image), floating animation, shine sweep `::before` effect
+   688→   - All links are `href="#"` (non-functional placeholders)
+   689→
+   690→6. **Footer**: black bg, "BOUTIQUE 13" h2 (40px) + "SEE YOU SOON" (gray)
+   691→
+   692→### J.2 Form Behavior (contact.js)
+   693→- GSAP animations: hero timeline (span/h1/p fade up), leftSide slides from -120, rightSide slides from +120, cards stagger, footer h2 fade
+   694→- Floating inputs: focus → border-bottom turns gold (#d4af37), blur → reverts to #555 if empty
+   695→- Button hover: scale 1.05 (GSAP)
+   696→- Submit: `e.preventDefault()`, button becomes "✔ پیام ارسال شد" with green bg #16a34a (FAKE success — no backend)
+   697→
+   698→### J.3 Custom Cursor
+   699→Same gold dot + ring cursor as index.html (`.cursor` + `.cursor2`), though the HTML has them commented out (`<!-- <div class="cursor"></div>... -->`). The JS still references them but they won't exist.
+   700→
+   701→---
+   702→
+   703→## K. Men Collection Page
+   704→
+   705→### K.1 Page Structure (MenCollection.html)
+   706→1. **Hero** (`.hero` `#top`): bg `images/menHero.jpg` (MISSING), gradient overlay, heroTag, heroContent
+   707→2. **Marquee** (`.marquee`): infinite scroll brand values
+   708→3. **Categories** (`#categories`): 5 filter pills
+   709→4. **Products** (`#products`): 5 product cards
+   710→5. **Footer** (`.siteFooter`)
+   711→
+   712→### K.2 Hero Tag (Signature Element)
+   713→```
+   714→       │ (string - 34px gold line)
+   715→   ┌────────────┐  ← rotated -6deg, dashed gold border, dark bg
+   716→   │   No.      │     backdrop-blur(6px)
+   717→   │    ۱۳      │     (Noto Serif Arabic 34px gold)
+   718→   │ دست‌ساز،   │
+   719→   │ بی‌زمان    │
+   720→   └────────────┘
+   721→```
+   722→Hidden on mobile (≤900px).
+   723→
+   724→### K.3 Marquee
+   725→- Border top/bottom `#2d2d2d`, bg #181818, 16px padding
+   726→- Track: flex, `width: max-content`, `scrollMarquee 26s linear infinite` (translateX 0 → -50%)
+   727→- Content: "کیفیت پارچه • الگوی اختصاصی • تولید محدود • بوتیک ۱۳ •" repeated twice (for seamless loop)
+   728→- Every 4th span is gold
+   729→- Respects `prefers-reduced-motion` (animation: none)
+   730→
+   731→### K.4 Category Filters
+   732→- 5 pills: همه (all, active by default) / تیشرت (tshirt) / شلوار (pants) / شلوارک (shorts) / کفش (shoes)
+   733→- Active: gold bg + gold border + black text + font-weight 600
+   734→- Inactive: transparent bg + #2d2d2d border + gray text
+   735→- Hover: gold border + white text
+   736→- Filter logic (men.js): reads `data-category` attr on each `.product` card, shows/hides via `style.display` (NO re-render, NO animation)
+   737→
+   738→### K.5 Product Grid
+   739→- `display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px`
+   740→- 5 hardcoded products (see section M for full data)
+   741→- Each card has 3D tilt effect on hover (men.js mousemove handler)
+   742→- Front/back image swap on hover
+   743→
+   744→### K.6 View Product Navigation
+   745→- Each product card has a gold "مشاهده محصول" button with `data-product-id="N"`
+   746→- Inline script: click → `window.location.href = 'product.html?id=' + this.dataset.productId`
+   747→
+   748→### K.7 Sorting / Advanced Filters
+   749→**NONE** — only the 5 category pills. No size filter, no color filter, no price filter, no sorting. (Task description mentioned these but they don't exist in the actual code.)
+   750→
+   751→---
+   752→
+   753→## L. Assets
+   754→
+   755→### L.1 Image Inventory
+   756→
+   757→#### `/img/` directory (7 files):
+   758→| File | Size | Purpose |
+   759→|------|------|---------|
+   760→| `Men.jpg` | 2.1 MB | Men's category card on homepage (index.html) |
+   761→| `Woman.png` | 2.0 MB | Women's category card on homepage |
+   762→| `accesories.jpg` | 43 KB | Accessories category card on homepage |
+   763→| `logo.jpg` | 14.7 KB | Logo image on contact page left side |
+   764→| `loginimg.png` | 2.2 MB | **UNUSED** — not referenced in any HTML/JS |
+   765→| `signupimg.png` | 2.8 MB | **UNUSED** — not referenced in any HTML/JS |
+   766→| `InShot_20260729_173055181_1920x1152.jpg` | 90 KB | Contact page hero background |
+   767→
+   768→#### `/img/products/` directory (6 files):
+   769→| File | Size | Purpose |
+   770→|------|------|---------|
+   771→| `tshirt (1).jpg` | 3.2 MB | T-shirt product image (thumbnail 2 on product.html, back image on MenCollection) |
+   772→| `tshirt (2).jpg` | 2.8 MB | T-shirt product image (main image on product.html, back image on MenCollection product 1) |
+   773→| `tshirt (3).jpg` | 2.6 MB | T-shirt product image (front image on MenCollection product 1, shoes category card on homepage) |
+   774→| `tshirt1.jpg` | 24 KB | **Referenced in product.html data-image but small/low-res** — appears to be a placeholder |
+   775→| `images (2).jpg` | 26 KB | Used on homepage product card "شلوار جین" + MenCollection (referenced) |
+   776→| `images (3).jpg` | 19 KB | Used on homepage product card "کفش اسپرت" + shoes category card on homepage |
+   777→
+   778→#### Root-level assets:
+   779→| File | Size | Purpose |
+   780→|------|------|---------|
+   781→| `Rubika.jpg` | (in root) | Rubika social icon on contact page |
+   782→| `خیلی مخلصیم🫡🤍ست دیور💎سایزبندی کامل M-L-XL-2XL 🤚🏻جهت استعلام 💵 پیام بزارید 🤍🙌🏻.mp4` | (in root) | Homepage hero video background |
+   783→
+   784→### L.2 Missing Images (Referenced but DON'T EXIST)
+   785→These images are referenced in HTML/JS but are NOT in the img/products/ directory:
+   786→- `img/products/tshirt2.jpg` — referenced in MenCollection product 2 + product.html product 2 images
+   787→- `img/products/pants1.jpg` — referenced in MenCollection product 3 + product.html product 3 images
+   788→- `img/products/shorts1.jpg` — referenced in MenCollection product 4 + product.html product 4 images
+   789→- `img/products/shoes1.jpg` — referenced in MenCollection product 5 + product.html product 5 images
+   790→- `images/menHero.jpg` — referenced in MenCollection.css `.hero` background
+   791→- `../images/hero.jpg` — referenced in style.css `.hero` background (but index.html uses video instead)
+   792→
+   793→### L.3 External CDN Dependencies
+   794→- **Font Awesome 6.6.0**: `https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css`
+   795→- **GSAP 3.12.7**: `https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js`
+   796→- **GSAP ScrollTrigger 3.12.7**: `https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js`
+   797→- **Google Fonts**: Poppins, Vazirmatn, Noto Serif Arabic, Playfair Display, DM Sans
+   798→- **React 18** (BoutiqueAuthExperience_2 only): `https://unpkg.com/react@18/umd/react.production.min.js`, `react-dom@18`, `@babel/standalone`
+   799→
+   800→---
+   801→
+   802→## M. Sample Product Data (for Database Seeding)
+   803→
+   804→### M.1 Product Catalog (from product.html inline script + MenCollection.html)
+   805→
+   806→This is the canonical product data extracted from the code:
+   807→
+   808→```javascript
+   809→const products = {
+   810→  "1": {
+   811→    id: "1",
+   812→    title: "تیشرت اورسایز مشکی Premium",
+   813→    name: "تیشرت اورسایز مشکی",                    // MenCollection variant
+   814→    price: 1490000,                                // ۱,۴۹۰,۰۰۰ تومان
+   815→    priceFormatted: "۱,۴۹۰,۰۰۰ تومان",
+   816→    category: "tshirt",
+   817→    categoryFa: "مردانه",
+   818→    description: "تیشرت اورسایز تهیه شده از پنبه ۱۰۰٪ با دوخت Premium مناسب استفاده روزمره.",
+   819→    descriptionShort: "تیشرت اورسایز Premium",
+   820→    images: [
+   821→      "img/products/tshirt (2).jpg",
+   822→      "img/products/tshirt (1).jpg",
+   823→      "img/products/tshirt (3).jpg"
+   824→    ],
+   825→    frontImage: "img/products/tshirt (3).jpg",     // MenCollection
+   826→    backImage: "img/products/tshirt (2).jpg",      // MenCollection
+   827→    mainImage: "img/products/tshirt (2).jpg",      // product.html
+   828→    sizes: ["S", "M", "L", "XL"],
+   829→    colors: [
+   830→      { name: "مشکی", hex: "#000000", cssClass: "black" },
+   831→      { name: "سفید", hex: "#ffffff", cssClass: "white" },
+   832→      { name: "آبی", hex: "#1e6eff", cssClass: "blue" }
+   833→    ],
+   834→    color: "مشکی",
+   835→    size: "L XL",
+   836→    brand: "Boutique13",
+   837→    rating: 5,
+   838→    reviewCount: 24,
+   839→    link: "product.html?id=1"
+   840→  },
+   841→  "2": {
+   842→    id: "2",
+   843→    title: "تیشرت سفید مینیمال",
+   844→    name: "تیشرت سفید مینیمال",
+   845→    price: 1290000,                                 // ۱,۲۹۰,۰۰۰ تومان
+   846→    priceFormatted: "۱,۲۹۰,۰۰۰ تومان",
+   847→    category: "tshirt",
+   848→    description: "تیشرت سفید مینیمال با طراحی ساده و مناسب استفاده روزمره.",
+   849→    images: ["img/products/tshirt2.jpg", "img/products/tshirt2.jpg", "img/products/tshirt2.jpg"],  // MISSING image
+   850→    frontImage: "img/products/tshirt2.jpg",         // MISSING
+   851→    backImage: "img/products/tshirt2.jpg",          // MISSING
+   852→    sizes: ["S", "M", "L", "XL"],
+   853→    colors: [{ name: "سفید", hex: "#ffffff" }],
+   854→    link: "product.html?id=2"
+   855→  },
+   856→  "3": {
+   857→    id: "3",
+   858→    title: "شلوار بگ مردانه",
+   859→    name: "شلوار بگ مردانه",
+   860→    price: 2190000,                                 // ۲,۱۹۰,۰۰۰ تومان
+   861→    priceFormatted: "۲,۱۹۰,۰۰۰ تومان",
+   862→    category: "pants",
+   863→    description: "شلوار بگ مردانه با فرم آزاد و مناسب استایل روزمره.",
+   864→    images: ["img/products/pants1.jpg", "img/products/pants1.jpg", "img/products/pants1.jpg"],  // MISSING image
+   865→    frontImage: "img/products/pants1.jpg",          // MISSING
+   866→    backImage: "img/products/pants1.jpg",           // MISSING
+   867→    sizes: ["S", "M", "L", "XL"],
+   868→    link: "product.html?id=3"
+   869→  },
+   870→  "4": {
+   871→    id: "4",
+   872→    title: "شلوارک اسپرت",
+   873→    name: "شلوارک اسپرت",
+   874→    price: 990000,                                  // ۹۹۰,۰۰۰ تومان
+   875→    priceFormatted: "۹۹۰,۰۰۰ تومان",
+   876→    category: "shorts",
+   877→    description: "شلوارک اسپرت مناسب استایل راحت و استفاده روزمره.",
+   878→    images: ["img/products/shorts1.jpg", "img/products/shorts1.jpg", "img/products/shorts1.jpg"],  // MISSING image
+   879→    frontImage: "img/products/shorts1.jpg",         // MISSING
+   880→    backImage: "img/products/shorts1.jpg",          // MISSING
+   881→    sizes: ["S", "M", "L", "XL"],
+   882→    link: "product.html?id=4"
+   883→  },
+   884→  "5": {
+   885→    id: "5",
+   886→    title: "کتانی سفید",
+   887→    name: "کتانی سفید",
+   888→    price: 3490000,                                 // ۳,۴۹۰,۰۰۰ تومان
+   889→    priceFormatted: "۳,۴۹۰,۰۰۰ تومان",
+   890→    category: "shoes",
+   891→    description: "کتانی سفید با طراحی مینیمال و مناسب استایل روزمره.",
+   892→    images: ["img/products/shoes1.jpg", "img/products/shoes1.jpg", "img/products/shoes1.jpg"],  // MISSING image
+   893→    frontImage: "img/products/shoes1.jpg",          // MISSING
+   894→    backImage: "img/products/shoes1.jpg",           // MISSING
+   895→    sizes: ["40", "41", "42", "43"],                // shoes probably use numeric sizes
+   896→    link: "product.html?id=5"
+   897→  }
+   898→};
+   899→```
+   900→
+   901→### M.2 Homepage Products (index.html — DIFFERENT prices/names!)
+   902→These 3 products appear ONLY on the homepage with different names/prices than the catalog above:
+   903→```javascript
+   904→// index.html "جدیدترین محصولات" section
+   905→[
+   906→  { name: "تیشرت مشکی", price: "2,600,000 تومان", image: "img/products/tshirt1.jpg" },
+   907→  { name: "شلوار جین", price: "2,750,000 تومان", image: "img/products/images (2).jpg" },
+   908→  { name: "کفش اسپرت", price: "4,200,000 تومان", image: "img/products/images (3).jpg" }
+   909→]
+   910→```
+   911→**INCONSISTENCY**: These don't match the catalog. Next.js should consolidate to ONE product source.
+   912→
+   913→### M.3 Categories
+   914→```javascript
+   915→const categories = [
+   916→  { id: "all", label: "همه" },
+   917→  { id: "tshirt", label: "تیشرت" },
+   918→  { id: "pants", label: "شلوار" },
+   919→  { id: "shorts", label: "شلوارک" },
+   920→  { id: "shoes", label: "کفش" }
+   921→];
+   922→```
+   923→
+   924→### M.4 Homepage Category Cards (index.html)
+   925→```javascript
+   926→const homeCategories = [
+   927→  { name: "مردانه", image: "img/Men.jpg", link: "MenCollection.html" },
+   928→  { name: "زنانه", image: "img/Woman.png", link: "#" },
+   929→  { name: "اکسسوری", image: "img/accesories.jpg", link: "#" },
+   930→  { name: "کفش", image: "img/products/images (3).jpg", link: "#" }
+   931→];
+   932→```
+   933→
+   934→### M.5 Dashboard Sample Orders (userdashboard.html)
+   935→```javascript
+   936→const sampleOrders = [
+   937→  {
+   938→    id: "10428",
+   939→    date: "۱۴ مرداد ۱۴۰۴",
+   940→    status: "shipped",          // ارسال شده
+   941→    statusLabel: "ارسال شده",
+   942→    progress: ["done", "done", "current", "pending"],  // ثبت/آماده‌سازی/ارسال/تحویل
+   943→    itemCount: 3,
+   944→    items: "کاپشن جین، شلوار چینو، تیشرت بیسیک",
+   945→    total: "4,280,000",
+   946→    action: "پیگیری مرسوله"
+   947→  },
+   948→  {
+   949→    id: "10391",
+   950→    date: "۲ مرداد ۱۴۰۴",
+   951→    status: "delivered",        // تحویل شده
+   952→    statusLabel: "تحویل شده",
+   953→    progress: ["done", "done", "done", "done"],
+   954→    itemCount: 1,
+   955→    items: "پیراهن کتان طوسی",
+   956→    total: "1,150,000",
+   957→    action: "ثبت نظر"
+   958→  },
+   959→  {
+   960→    id: "10450",
+   961→    date: "امروز",
+   962→    status: "processing",       // در حال آماده‌سازی
+   963→    statusLabel: "در حال آماده‌سازی",
+   964→    progress: ["done", "current", "pending", "pending"],
+   965→    itemCount: 2,
+   966→    items: "کت اسپرت مشکی، شلوار پارچه‌ای",
+   967→    total: "3,900,000",
+   968→    action: "جزئیات سفارش"
+   969→  }
+   970→];
+   971→```
+   972→
+   973→### M.6 Dashboard User (hardcoded)
+   974→```javascript
+   975→const sampleUser = {
+   976→  initials: "ع.ر",
+   977→  name: "علی رضایی",
+   978→  phone: "09123456789",
+   979→  stats: { orders: 7, inTransit: 2, wishlist: 12 },
+   980→  addresses: [
+   981→    { tag: "پیش‌فرض", text: "تهران، خیابان ولیعصر، بالاتر از پارک وی، پلاک ۱۲، واحد ۳" },
+   982→    { tag: "محل کار", text: "تهران، سعادت‌آباد، خیابان علامه، برج نگین، طبقه ۵" }
+   983→  ],
+   984→  wishlistTeaser: ["کاپشن بمبر", "کفش چرم", "پیراهن دو جیب", "شلوار کتان"]
+   985→};
+   986→```
+   987→
+   988→### M.7 Contact Info (contact.html)
+   989→```javascript
+   990→const contactInfo = {
+   991→  phone: "09918698146",
+   992→  supportDays: "شنبه تا جمعه",
+   993→  supportHours: "10:30 تا 21:30",
+   994→  storeOpen: "10:30",
+   995→  storeClose: "21:30",
+   996→  neshanMapUrl: "https://nshn.ir/sbLxYN2AqgS3",
+   997→  googleMapUrl: "https://maps.app.goo.gl/6o4KGBAhxxFJVhzB8",
+   998→  socials: [
+   999→    { name: "Instagram", url: "#", icon: "fab fa-instagram" },
+  1000→    { name: "Telegram", url: "#", icon: "fab fa-telegram" },
+  1001→    { name: "WhatsApp", url: "#", icon: "fab fa-whatsapp" },
+  1002→    { name: "Rubika", url: "#", image: "Rubika.jpg" }
+  1003→  ]
+  1004→};
+  1005→```
+  1006→
+  1007→---
+  1008→
+  1009→## N. Special Interactions
+  1010→
+  1011→### N.1 Animations (GSAP)
+  1012→
+  1013→#### index.html (main.js):
+  1014→- **Loader fade**: `#loader` opacity 0 over 1.2s, 1s delay, then `display:none`
+  1015→- **Hero entrance**: `.hero-content span/h1/p/button` fade up with staggered delays (2s, 2.2s, 2.5s, 2.8s)
+  1016→- **Hero scroll parallax**: `.hero` scales to 0.92 + border-radius 40px on scroll (scrub)
+  1017→- **Hero content parallax**: `.hero-content` translateY -180 + opacity 0 on scroll (scrub)
+  1018→- **Categories entrance**: `.card` fade up (y:150, stagger 0.3, trigger at 70%)
+  1019→- **Products entrance**: `.product` fade up (y:100, stagger 0.25, trigger at 70%)
+  1020→- **Header scroll**: >80px → stronger bg + box-shadow
+  1021→- **Custom cursor**: `.cursor` (10px gold dot) + `.cursor2` (45px gold ring) follow mouse via GSAP (durations .05 and .25). Ring scales 1.8 on hover over interactive elements.
+  1022→
+  1023→#### contact.html (contact.js):
+  1024→- **Hero timeline**: span (y:40) → h1 (y:80) → p (y:40), each 1s/.8s with overlap
+  1025→- **Left image entrance**: slides from x:-120, opacity 0 (trigger at 75%)
+  1026→- **Right form entrance**: slides from x:120, opacity 0 (trigger at 75%)
+  1027→- **Cards stagger**: y:80, opacity 0, stagger 0.25 (trigger at 80%)
+  1028→- **Footer h2**: y:60, opacity 0 (trigger at 85%)
+  1029→- **Floating inputs**: focus → border-bottom color animates to gold; blur → reverts if empty
+  1030→- **Button hover**: scale 1.05 (GSAP, .3s)
+  1031→- **Form submit**: button becomes "✔ پیام ارسال شد" + green bg #16a34a (FAKE success)
+  1032→- **Custom cursor**: same as index.html
+  1033→
+  1034→#### BoutiqueAuthExperience_2.html (React + inline CSS animations):
+  1035→- **3D card flip**: 360° rotateY on mode switch (login↔signup), content swaps at 50% of rotation
+  1036→- **Card tilt**: mousemove → perspective + rotateX/rotateY (max ~2deg)
+  1037→- **Morph transition**: 380ms between form/otp/success views
+  1038→- **Ambient sweep light**: animates during flip
+  1039→- **Mark13**: brand mark pulses/changes during transitions
+  1040→- **MagneticButton**: button follows cursor slightly
+  1041→- **OTP shake**: error → `b13-otp-row--shake` class
+  1042→- **Phone shake**: error → phone field shakes for 420ms
+  1043→- **Success ring**: SVG circle stroke-dashoffset animation (draws circle)
+  1044→- **Check pop**: SVG check scales in
+  1045→- **Respects `prefers-reduced-motion`**: all animations disabled, instant transitions
+  1046→
+  1047→### N.2 CSS Animations
+  1048→
+  1049→| Animation | Duration | Used For |
+  1050→|-----------|----------|----------|
+  1051→| `updown` | 1.5s infinite | Scroll-down indicator bounce (index.html) |
+  1052→| `cartOpen` | .5s | Cart drawer scale-in |
+  1053→| `cartBounce` | .4s | Cart icon bounce on add |
+  1054→| `heartBeat` | .45s | Favorite button liked state |
+  1055→| `checkPop` | .45s | Add-to-cart checkmark |
+  1056→| `scrollMarquee` | 26s linear infinite | MenCollection marquee |
+  1057→| `show` | .8s forwards | Product card entrance (MenCollection) |
+  1058→| `fadeResult` | .25s | Search result item entrance |
+  1059→| `float` | 3s ease-in-out infinite | Social icons + nav icon (contact) |
+  1060→
+  1061→### N.3 Modals / Overlays
+  1062→
+  1063→| Element | Trigger | Close |
+  1064→|---------|---------|-------|
+  1065→| `.cartOverlay` + `.cart` drawer | `.cartBtn` click | `.closeCart` / overlay click |
+  1066→| `.searchOverlay` | `.searchBtn` click | `.closeSearch` / overlay backdrop / Escape |
+  1067→| `.mobileMenu` | `.menuToggle` (hamburger) click | link click / Escape |
+  1068→| `.call-card` expand | `.call-btn` click (`toggleCallCard()`) | same button (toggle) |
+  1069→
+  1070→### N.4 Toast Notifications
+  1071→- Created dynamically by wishlist.js
+  1072→- `.toast`: fixed bottom 35px, centered, dark bg, white text, blur backdrop
+  1073→- Animation: opacity 0 + translateY(50px) → visible (.4s)
+  1074→- Auto-dismiss 1.8s
+  1075→- Used for: "به علاقه‌مندی اضافه شد." / "از علاقه‌مندی حذف شد."
+  1076→
+  1077→### N.5 Image Interactions
+  1078→- **Front/back swap** (MenCollection products): front image fades out, back image fades in + scales 1.1→1 on hover
+  1079→- **Main image zoom** (product.html): transform-origin follows cursor, scale 1.4 on mousemove
+  1080→- **Thumbnail swap** (product.html): click thumbnail → main image fades out (200ms) → src swaps → fades back in
+  1081→- **Category card zoom** (index.html): image scales 1.08 on hover
+  1082→- **Logo image zoom** (contact.html): scales 1.04 on hover
+  1083→
+  1084→### N.6 Form Interactions
+  1085→- **Floating labels** (contact.html): labels animate up + turn gold on focus/valid
+  1086→- **OTP auto-advance** (login.html + React auth): digits auto-focus next input, backspace navigates back
+  1087→- **Password eye toggle** (React auth only): show/hide password
+  1088→- **Phone validation** (React auth): empty phone → shake animation + error message
+  1089→
+  1090→### N.7 3D Tilt Effect (men.js)
+  1091→```javascript
+  1092→// On .product mousemove:
+  1093→card.style.transform = `
+  1094→  perspective(1200px)
+  1095→  rotateX(${rotateX}deg)    // based on Y position, max ~4deg
+  1096→  rotateY(${rotateY}deg)    // based on X position, max ~4deg
+  1097→  translateY(-10px)
+  1098→  scale(1.02)
+  1099→`;
+  1100→// On mouseleave: resets to 0/0/0/1
+  1101→```
+  1102→
+  1103→---
+  1104→
+  1105→## O. Critical Issues & Inconsistencies to Fix in Next.js
+  1106→
+  1107→### O.1 Design Inconsistencies
+  1108→1. **index.html uses LIGHT theme** while rest of site uses DARK theme — must reconcile to dark + gold
+  1109→2. **Two different navbar implementations** (inline index.html vs navbar.js) — must unify
+  1110→3. **Two different auth pages** (login.html vs BoutiqueAuthExperience_2.html) — pick one (recommend the React one as it's more polished)
+  1111→4. **Three different color palettes** — must standardize (recommend Dark Luxury Gold as primary, with Paper/Ink for auth/dashboard as a secondary "member" theme)
+  1112→
+  1113→### O.2 Missing Assets
+  1114→- 4 product images (tshirt2.jpg, pants1.jpg, shorts1.jpg, shoes1.jpg) — need real product photos
+  1115→- menHero.jpg (MenCollection hero bg)
+  1116→- hero.jpg (style.css reference, unused since index uses video)
+  1117→- loginimg.png and signupimg.png exist but are UNUSED
+  1118→
+  1119→### O.3 Missing Pages (Dead Links)
+  1120→- women.html, shoes.html, accessories.html (navbar links)
+  1121→- checkout.html (cart checkout button)
+  1122→- js/products-data.js (referenced in MenCollection.html but doesn't exist)
+  1123→
+  1124→### O.4 Code Issues
+  1125→- **Wishlist hardcoded to product id=1** — toggle() always creates same product object
+  1126→- **Search only indexes `.productCard` elements** (product.html), not `.product` elements (MenCollection.html) — search doesn't work on MenCollection
+  1127→- **Product prices inconsistent** between index.html (2,600,000 تومان) and product.html (1,490,000 تومان) for what should be the same product
+  1128→- **cart.js duplicates navbar.js code** — both files contain the full navbar injection + ShoppingCart class
+  1129→- **navbar.js links array is duplicated** with different hrefs (MenCollection.html vs men.html) between the two copies
+  1130→- **Custom cursor divs commented out** in contact.html but JS still tries to query them
+  1131→- **No real auth, no real cart persistence beyond localStorage, no backend at all**
+  1132→
+  1133→### O.5 Recommended Next.js Architecture
+  1134→- **Framework**: Next.js 16 with App Router, TypeScript, Tailwind CSS 4
+  1135→- **State**: Zustand or React Context for cart/wishlist (persisted to localStorage)
+  1136→- **Database**: Prisma ORM (already in /home/z/my-project/prisma/) with PostgreSQL/SQLite
+  1137→- **Auth**: NextAuth.js with phone+OTP credentials provider (replace fake OTP)
+  1138→- **Fonts**: Vazirmatn (Persian) + Playfair Display (English display) via next/font
+  1139→- **Animations**: Framer Motion (replace GSAP for React-friendly animations)
+  1140→- **Icons**: lucide-react (replace Font Awesome + inline SVGs)
+  1141→- **UI Components**: shadcn/ui (already configured per /home/z/my-project/components.json)
+  1142→- **Routes**:
+  1143→  - `/` (homepage — unify to dark theme)
+  1144→  - `/men` (men's collection)
+  1145→  - `/women` (build new)
+  1146→  - `/shoes` (build new)
+  1147→  - `/accessories` (build new)
+  1148→  - `/product/[id]` (product detail)
+  1149→  - `/cart` (or keep as drawer)
+  1150→  - `/checkout` (build new)
+  1151→  - `/contact`
+  1152→  - `/login` (consolidate to one auth flow)
+  1153→  - `/dashboard` (user profile)
+  1154→  - `/wishlist` (build new dedicated page)
+  1155→- **API Routes**:
+  1156→  - `GET /api/products` (list with filters)
+  1157→  - `GET /api/products/[id]` (detail)
+  1158→  - `POST /api/auth/otp/send` (send OTP)
+  1159→  - `POST /api/auth/otp/verify` (verify OTP)
+  1160→  - `POST /api/cart` (sync cart)
+  1161→  - `POST /api/contact` (contact form submission)
+  1162→  - `POST /api/orders` (create order)
+  1163→

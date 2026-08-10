@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Prisma schema for Boutique13 e-commerce
+// Persian/Farsi RTL boutique fashion store
 
 generator client {
   provider = "prisma-client-js"
@@ -13,20 +10,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  price       Int
+  oldPrice    Int?
+  category    String
+  description String
+  images      String
+  sizes       String
+  colors      String
+  brand       String   @default("Boutique13")
+  rating      Float    @default(5)
+  reviewCount Int      @default(0)
+  isFeatured  Boolean  @default(false)
+  inStock     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
 }
 
-model Post {
+model ContactMessage {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
+  name      String
+  email     String
+  phone     String
+  message   String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  orderNo   String   @unique
+  userName  String
+  userPhone String
+  total     Int
+  status    String   @default("processing")
+  items     String
+  address   String
+  createdAt DateTime @default(now())
 }
