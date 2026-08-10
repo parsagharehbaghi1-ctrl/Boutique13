@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تیشرت اورسایز مشکی Premium | Boutique13</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <!-- استایل اختصاصی این صفحه -->
+    <link rel="stylesheet" href="MenCollection.css">
+    <link rel="stylesheet" href="css/product.css">
+    <link rel="stylesheet" href="css/search.css">
+
+</head>
+
+<body>
+
+    <!--
+        توجه: بخش سبد خرید (cartOverlay / cart / closeCart / deleteItem)
+        اینجا دیگه دستی نوشته نمی‌شه. js/cart.js خودش این بخش رو با
+        insertAdjacentHTML می‌سازه و به ابتدای body اضافه می‌کنه.
+        نوشتنش اینجا باعث می‌شد سه نسخه از این عناصر همزمان روی صفحه
+        باشه و دکمه‌های ✕ و 🗑 که شما کلیک می‌کردید، اون نسخه‌ای نبود
+        که جاوااسکریپت بهش گوش می‌داد.
+    -->
+
+    <section class="productPage">
+
+        <!-- تصاویر -->
+        <div class="gallery">
+
+            <div class="mainImage">
+                <img id="mainImage" src="img/products/tshirt (2).jpg" alt="محصول">
+            </div>
+
+            <div class="thumbs">
+                <img class="thumb active" src="./img/products/tshirt (2).jpg">
+                <img class="thumb" src="img/products/tshirt (1).jpg">
+                <img class="thumb" src="img/products/tshirt (3).jpg">
+            </div>
+
+        </div>
+
+        <!-- اطلاعات -->
+        <div class="details">
+
+            <span class="brand">Boutique13</span>
+
+            <h1>تیشرت اورسایز مشکی Premium</h1>
+
+            <div class="stars">
+                ★★★★★
+                <span>(۲۴ نظر)</span>
+            </div>
+
+            <div class="price">۱,۴۹۰,۰۰۰ تومان</div>
+
+            <p class="description">
+                تیشرت اورسایز تهیه شده از پنبه ۱۰۰٪ با دوخت Premium مناسب استفاده روزمره.
+            </p>
+
+            <h3>انتخاب سایز</h3>
+            <div class="sizes">
+                <button>S</button>
+                <button>M</button>
+                <button>L</button>
+                <button>XL</button>
+            </div>
+
+            <h3>رنگ</h3>
+            <div class="colors">
+                <span class="black" data-color="مشکی"></span>
+                <span class="white" data-color="سفید"></span>
+                <span class="blue" data-color="آبی"></span>
+            </div>
+
+            <div class="actions">
+                <button class="addtocart">افزودن به سبد خرید</button>
+                <button class="favorite">❤</button>
+            </div>
+
+        </div>
+
+        <!-- ================= Search Overlay ================= -->
+        <div class="searchOverlay">
+            <div class="searchBox">
+                <div class="searchHeader">
+                    <input type="text" id="searchInput" placeholder="جستجوی محصول..." autocomplete="off">
+                    <button class="closeSearch"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="searchResults"></div>
+            </div>
+        </div>
+
+        <div class="productCard" data-id="1" data-name="تیشرت اورسایز" data-category="مردانه" data-price="1490000"
+            data-color="مشکی" data-size="L XL" data-description="تیشرت اورسایز Premium"
+            data-image="images/products/tshirt1.jpg" data-link="product.html?id=1">
+        </div>
+        <div class="product productCard"></div>
+
+    </section>
+
+    <!--
+        ترتیب اسکریپت‌ها:
+        - js/navbar.js حذف شد چون js/cart.js از قبل خودش هدر و سبد
+          خرید رو می‌سازه؛ نگه‌داشتن هر دو یعنی هدر دو بار ساخته می‌شه.
+        - js/men.js حذف شد چون مخصوص صفحه‌ی لیست محصولات مردانه‌ست،
+          نه صفحه‌ی تکی محصول، و متغیر productCards توش با همین متغیر
+          در search.js تداخل داشت و باعث توقف اجرای search.js می‌شد.
+        - cart.js باید قبل از product.js لود بشه چون product.js به
+          متغیر سراسری shoppingCart نیاز داره.
+    -->
+    <script src="js/cart.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="js/product.js"></script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const products = {
+        "1": {
+            title: "تیشرت اورسایز مشکی Premium",
+            price: "۱,۴۹۰,۰۰۰ تومان",
+            description: "تیشرت اورسایز تهیه شده از پنبه ۱۰۰٪ با دوخت Premium مناسب استفاده روزمره.",
+            images: ["img/products/tshirt (2).jpg", "img/products/tshirt (1).jpg", "img/products/tshirt (3).jpg"]
+        },
+        "2": {
+            title: "تیشرت سفید مینیمال",
+            price: "۱,۲۹۰,۰۰۰ تومان",
+            description: "تیشرت سفید مینیمال با طراحی ساده و مناسب استفاده روزمره.",
+            images: ["img/products/tshirt2.jpg", "img/products/tshirt2.jpg", "img/products/tshirt2.jpg"]
+        },
+        "3": {
+            title: "شلوار بگ مردانه",
+            price: "۲,۱۹۰,۰۰۰ تومان",
+            description: "شلوار بگ مردانه با فرم آزاد و مناسب استایل روزمره.",
+            images: ["img/products/pants1.jpg", "img/products/pants1.jpg", "img/products/pants1.jpg"]
+        },
+        "4": {
+            title: "شلوارک اسپرت",
+            price: "۹۹۰,۰۰۰ تومان",
+            description: "شلوارک اسپرت مناسب استایل راحت و استفاده روزمره.",
+            images: ["img/products/shorts1.jpg", "img/products/shorts1.jpg", "img/products/shorts1.jpg"]
+        },
+        "5": {
+            title: "کتانی سفید",
+            price: "۳,۴۹۰,۰۰۰ تومان",
+            description: "کتانی سفید با طراحی مینیمال و مناسب استایل روزمره.",
+            images: ["img/products/shoes1.jpg", "img/products/shoes1.jpg", "img/products/shoes1.jpg"]
+        }
+    };
+
+    const id = new URLSearchParams(location.search).get('id') || '1';
+    const p = products[id] || products["1"];
+
+    document.title = p.title + " | Boutique13";
+
+    const main = document.getElementById('mainImage');
+    const title = document.querySelector('.details h1');
+    const price = document.querySelector('.details .price');
+    const desc = document.querySelector('.details .description');
+    const thumbs = document.querySelectorAll('.thumb');
+
+    if (main) {
+        main.src = p.images[0];
+        main.alt = p.title;
+    }
+    if (title) title.textContent = p.title;
+    if (price) price.textContent = p.price;
+    if (desc) desc.textContent = p.description;
+
+    thumbs.forEach(function (thumb, i) {
+        if (!p.images[i]) {
+            thumb.style.display = 'none';
+            return;
+        }
+        thumb.src = p.images[i];
+        thumb.alt = p.title;
+        thumb.onclick = function () {
+            main.src = p.images[i];
+            thumbs.forEach(t => t.classList.remove('active'));
+            thumb.classList.add('active');
+        };
+    });
+});
+</script>
+
+</body>
+
+</html>

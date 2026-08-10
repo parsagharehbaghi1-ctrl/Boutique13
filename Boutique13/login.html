@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ورود و ثبت‌نام</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1b19;
+    --paper:#f4f1ea;
+    --olive:#5f6a4c;
+    --olive-dark:#454e37;
+    --rust:#a15630;
+    --line:#d8d2c4;
+    --muted:#8a8477;
+    --panel:#20201d;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Vazirmatn', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px;
+  }
+
+  .stage{
+    width:100%;
+    max-width:920px;
+    display:grid;
+    grid-template-columns:1fr 1.1fr;
+    background:var(--paper);
+    border:1px solid var(--line);
+    min-height:600px;
+    box-shadow:0 40px 80px -40px rgba(28,27,25,0.35);
+  }
+  @media (max-width:760px){
+    .stage{grid-template-columns:1fr; min-height:auto;}
+    .brandside{display:none;}
+  }
+
+  /* ===== brand side ===== */
+  .brandside{
+    background:var(--panel);
+    color:var(--paper);
+    position:relative;
+    padding:40px 36px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    overflow:hidden;
+  }
+  .brandside::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      repeating-linear-gradient(135deg, rgba(244,241,234,0.035) 0px, rgba(244,241,234,0.035) 1px, transparent 1px, transparent 14px);
+    pointer-events:none;
+  }
+  .brand-mark{
+    font-size:13px;
+    letter-spacing:0.14em;
+    color:var(--paper);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    z-index:1;
+  }
+  .brand-mark .sq{
+    width:9px;height:9px;
+    background:var(--rust);
+    display:inline-block;
+  }
+  .brand-copy{z-index:1;}
+  .brand-copy h1{
+    font-size:34px;
+    line-height:1.35;
+    font-weight:700;
+    margin:0 0 14px;
+    max-width:280px;
+  }
+  .brand-copy p{
+    font-size:14px;
+    line-height:1.9;
+    color:#c9c5bb;
+    max-width:270px;
+    margin:0;
+  }
+  .brand-foot{
+    z-index:1;
+    font-size:12px;
+    color:#8f8a7d;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .brand-foot .dash{width:24px;height:1px;background:#4a473f;}
+
+  /* ===== form side ===== */
+  .formside{
+    padding:40px 40px 36px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* tag-style toggle — the signature element */
+  .tagswitch{
+    display:flex;
+    align-self:flex-start;
+    position:relative;
+    margin-bottom:36px;
+    border:1px solid var(--ink);
+  }
+  .tagswitch::before{
+    content:"";
+    position:absolute;
+    top:50%; right:-11px;
+    width:7px;height:7px;
+    border:1px solid var(--ink);
+    border-radius:50%;
+    background:var(--paper);
+    transform:translateY(-50%);
+  }
+  .tagswitch button{
+    font-family:inherit;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    padding:10px 22px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    color:var(--muted);
+    position:relative;
+    transition:color .25s ease;
+  }
+  .tagswitch button.active{color:var(--paper);}
+  .tagswitch .slider{
+    position:absolute;
+    top:0; bottom:0;
+    right:0;
+    width:50%;
+    background:var(--ink);
+    transition:right .3s cubic-bezier(.65,0,.35,1);
+    z-index:0;
+  }
+  .tagswitch button span{position:relative; z-index:1;}
+  .tagswitch[data-mode="register"] .slider{right:50%;}
+
+  .headline{margin-bottom:28px;}
+  .headline .eyebrow{
+    font-size:11px;
+    letter-spacing:0.14em;
+    color:var(--rust);
+    font-weight:700;
+    display:block;
+    margin-bottom:8px;
+  }
+  .headline h2{
+    font-size:24px;
+    font-weight:700;
+    margin:0;
+  }
+
+  form{display:flex; flex-direction:column; gap:18px;}
+  .field{display:flex; flex-direction:column; gap:8px;}
+  .field label{
+    font-size:12.5px;
+    color:var(--muted);
+    font-weight:600;
+  }
+  .field input{
+    font-family:inherit;
+    font-size:14.5px;
+    padding:13px 14px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .2s ease;
+  }
+  .field input:focus{border-color:var(--ink);}
+  .field input::placeholder{color:#b7b1a2;}
+
+  .otp-row{display:flex; gap:8px; direction:ltr;}
+  .otp-row input{
+    width:44px; height:52px;
+    text-align:center;
+    padding:0;
+    font-size:18px;
+  }
+
+  .row-between{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:13px;
+    margin-top:-4px;
+  }
+  .remember{display:flex; align-items:center; gap:7px; color:var(--muted);}
+  .remember input{accent-color:var(--ink);}
+  .forgot{color:var(--olive-dark); text-decoration:none; font-weight:600;}
+  .forgot:hover{text-decoration:underline;}
+
+  .submit{
+    margin-top:6px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    font-family:inherit;
+    font-size:14.5px;
+    font-weight:700;
+    padding:15px;
+    cursor:pointer;
+    letter-spacing:0.01em;
+    transition:background .2s ease;
+  }
+  .submit:hover{background:var(--olive-dark);}
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:26px 0 18px;
+    color:var(--muted);
+    font-size:12px;
+  }
+  .divider::before, .divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+
+  .otp-alt{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:600;
+    padding:12px;
+    cursor:pointer;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .otp-alt:hover{border-color:var(--ink); background:#eae6dc;}
+
+  .switch-note{
+    margin-top:auto;
+    padding-top:24px;
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .switch-note a{color:var(--ink); font-weight:700; text-decoration:none; cursor:pointer;}
+  .switch-note a:hover{text-decoration:underline;}
+
+  .pane{display:none;}
+  .pane.active{display:flex; flex-direction:column;}
+
+  .otp-desc{
+    font-size:13.5px;
+    color:var(--muted);
+    line-height:1.9;
+    margin:0 0 24px;
+  }
+  .otp-desc span{color:var(--ink); font-weight:700;}
+  .otp-desc #edit-phone{
+    color:var(--olive-dark);
+    font-weight:700;
+    text-decoration:none;
+    margin-inline-start:6px;
+  }
+  .otp-desc #edit-phone:hover{text-decoration:underline;}
+
+  .resend-row{
+    margin-top:26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .resend-btn{
+    font-family:inherit;
+    font-size:13px;
+    font-weight:700;
+    color:var(--ink);
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    text-decoration:underline;
+  }
+  .resend-btn:disabled{
+    color:var(--muted);
+    cursor:default;
+    text-decoration:none;
+    display:none;
+  }
+
+  .terms{
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.7;
+  }
+  .terms a{color:var(--olive-dark); text-decoration:none; font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <div class="brandside">
+    <div class="brand-mark"><span class="sq"></span> فروشگاه پوشاک</div>
+    <div class="brand-copy">
+      <h1>یک حساب کاربری،<br>یک اندازه‌ی درست.</h1>
+      <p>سایزها، سفارش‌ها و علاقه‌مندی‌های شما همیشه همراه‌تون می‌مونه. کافیه یک‌بار وارد بشید.</p>
+    </div>
+    <div class="brand-foot"><span class="dash"></span> از ۲ دقیقه کمتر زمان می‌بره</div>
+  </div>
+
+  <div class="formside">
+
+    <div class="tagswitch" id="tagswitch" data-mode="login">
+      <div class="slider"></div>
+      <button type="button" class="active" data-mode="login"><span>ورود</span></button>
+      <button type="button" data-mode="register"><span>ثبت‌نام</span></button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="pane active" id="pane-login">
+      <div class="headline">
+        <span class="eyebrow">خوش برگشتی</span>
+        <h2>وارد حساب کاربری‌ات شو</h2>
+      </div>
+
+      <form onsubmit="event.preventDefault()">
+        <div class="field">
+          <label for="login-phone">شماره موبایل</label>
+          <input id="login-phone" type="tel" placeholder="09xxxxxxxxx" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="login-pass">رمز عبور</label>
+          <input id="login-pass" type="password" placeholder="رمز عبور خود را وارد کنید">
+        </div>
+        <div class="row-between">
+          <label class="remember"><input type="checkbox"> مرا به خاطر بسپار</label>
+          <a class="forgot" href="#">رمز عبور را فراموش کرده‌ام</a>
+        </div>
+        <button class="submit" type="submit">ورود به حساب</button>
+      </form>
+
+      <div class="divider">یا</div>
+      <button class="otp-alt" type="button">ورود سریع با کد پیامکی</button>
+
+      <div class="switch-note">
+        حساب کاربری نداری؟ <a data-mode="register">همین حالا ثبت‌نام کن</a>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="pane" id="pane-register">
+      <div class="headline">
+        <span class="eyebrow">عضویت جدید</span>
+        <h2>حساب کاربری بساز</h2>
+      </div>
+
+      <form onsubmit="event.preventDefault()">
+        <div class="field">
+          <label for="reg-name">نام و نام‌خانوادگی</label>
+          <input id="reg-name" type="text" placeholder="مثلاً علی رضایی">
+        </div>
+        <div class="field">
+          <label for="reg-phone">شماره موبایل</label>
+          <input id="reg-phone" type="tel" placeholder="09xxxxxxxxx" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="reg-pass">رمز عبور</label>
+          <input id="reg-pass" type="password" placeholder="حداقل ۸ کاراکتر">
+        </div>
+        <p class="terms">با ثبت‌نام، <a href="#">قوانین و مقررات</a> فروشگاه را می‌پذیرم.</p>
+        <button class="submit" type="submit">دریافت کد تایید</button>
+      </form>
+
+      <div class="switch-note">
+        قبلاً ثبت‌نام کرده‌ای؟ <a data-mode="login">وارد شو</a>
+      </div>
+    </div>
+
+    <!-- OTP VERIFICATION -->
+    <div class="pane" id="pane-otp">
+      <div class="headline">
+        <span class="eyebrow">تایید هویت</span>
+        <h2>کد تایید را وارد کن</h2>
+      </div>
+
+      <p class="otp-desc">کد ۵ رقمی به شماره <span id="otp-phone-display">۰۹۱۲۳۴۵۶۷۸۹</span> پیامک شد.
+        <a id="edit-phone" href="#">ویرایش شماره</a>
+      </p>
+
+      <form onsubmit="event.preventDefault()">
+        <div class="otp-row">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-digit">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-digit">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-digit">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-digit">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-digit">
+        </div>
+        <button class="submit" type="submit" style="margin-top:22px;">تایید و ورود</button>
+      </form>
+
+      <div class="resend-row">
+        <span id="resend-timer">ارسال مجدد کد تا ۰۱:۵۹</span>
+        <button type="button" id="resend-btn" class="resend-btn" disabled>ارسال دوباره کد</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const ts = document.getElementById('tagswitch');
+  const paneLogin = document.getElementById('pane-login');
+  const paneRegister = document.getElementById('pane-register');
+  const paneOtp = document.getElementById('pane-otp');
+  const btns = ts.querySelectorAll('button');
+  const panes = { login: paneLogin, register: paneRegister, otp: paneOtp };
+
+  function setMode(mode, phone){
+    const showSwitch = (mode === 'login' || mode === 'register');
+    ts.style.display = showSwitch ? 'flex' : 'none';
+    if(showSwitch){
+      ts.dataset.mode = mode;
+      btns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    }
+    Object.entries(panes).forEach(([key, el]) => el.classList.toggle('active', key === mode));
+    if(mode === 'otp'){
+      if(phone) document.getElementById('otp-phone-display').textContent = phone;
+      startResendTimer();
+      const first = paneOtp.querySelector('.otp-digit');
+      if(first) first.focus();
+    }
+  }
+
+  btns.forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  document.querySelectorAll('.switch-note a[data-mode]').forEach(a=>{
+    a.addEventListener('click', () => setMode(a.dataset.mode));
+  });
+
+  // register form -> otp
+  paneRegister.querySelector('form').addEventListener('submit', () => {
+    const phone = document.getElementById('reg-phone').value.trim() || '۰۹xxxxxxxxx';
+    setMode('otp', phone);
+  });
+
+  // quick sms login -> otp
+  paneLogin.querySelector('.otp-alt').addEventListener('click', () => {
+    const phone = document.getElementById('login-phone').value.trim() || '۰۹xxxxxxxxx';
+    setMode('otp', phone);
+  });
+
+  // edit phone -> go back to whichever pane sent us here (default: register)
+  document.getElementById('edit-phone').addEventListener('click', (e) => {
+    e.preventDefault();
+    setMode('register');
+  });
+
+  // otp digit auto-advance
+  const digits = Array.from(paneOtp.querySelectorAll('.otp-digit'));
+  digits.forEach((input, i) => {
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/[^0-9]/g, '');
+      if(input.value && digits[i+1]) digits[i+1].focus();
+    });
+    input.addEventListener('keydown', (e) => {
+      if(e.key === 'Backspace' && !input.value && digits[i-1]) digits[i-1].focus();
+    });
+  });
+
+  // resend countdown
+  let resendInterval;
+  function startResendTimer(){
+    clearInterval(resendInterval);
+    let seconds = 119;
+    const timerEl = document.getElementById('resend-timer');
+    const resendBtn = document.getElementById('resend-btn');
+    timerEl.style.display = 'inline';
+    resendBtn.disabled = true;
+
+    function render(){
+      const m = String(Math.floor(seconds/60)).padStart(2,'0');
+      const s = String(seconds%60).padStart(2,'0');
+      timerEl.textContent = `ارسال مجدد کد تا ${m}:${s}`;
+    }
+    render();
+    resendInterval = setInterval(() => {
+      seconds--;
+      if(seconds <= 0){
+        clearInterval(resendInterval);
+        timerEl.style.display = 'none';
+        resendBtn.disabled = false;
+        return;
+      }
+      render();
+    }, 1000);
+  }
+
+  resendBtnHandler();
+  function resendBtnHandler(){
+    document.getElementById('resend-btn').addEventListener('click', () => {
+      startResendTimer();
+    });
+  }
+</script>
+
+</body>
+</html>

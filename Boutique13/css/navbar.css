@@ -1,0 +1,350 @@
+/* ==============================================
+   NAVBAR یکپارچه بوتیک ۱۳
+   این تنها فایل CSS هدر/ناوبری کل سایته.
+   کافیه همین یک فایل رو تو <head> همه‌ی صفحات لینک کنی
+   تا هدر همه‌جا دقیقاً یکسان باشه (دیگه نیازی به کپی/پیست
+   استایل هدر داخل هر فایل صفحه نیست).
+   ============================================== */
+
+:root{
+    --gold:#D4AF37;
+    --goldHover:#E8C862;
+    --black:#0f0f0f;
+    --black2:#181818;
+    --border:#2d2d2d;
+}
+
+/* ---------- Header ---------- */
+.site-header{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    width:92%;
+    max-width:1400px;
+    height:80px;
+    padding:0 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-radius:25px;
+    background:rgba(20,20,20,.55);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+    z-index:9999;
+    transition:.4s ease;
+}
+
+/* وقتی صفحه اسکرول میشه هدر جمع‌وجورتر و تیره‌تر میشه؛
+   یه لمس حرفه‌ای که تو نسخه‌ی قبلی نبود */
+.site-header.scrolled{
+    top:12px;
+    height:68px;
+    background:rgba(12,12,12,.82);
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+
+/* ---------- Logo ---------- */
+.logo{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    font-weight:700;
+}
+
+.logoIcon{
+    width:48px;
+    height:48px;
+    flex-shrink:0;
+    border:2px solid var(--gold);
+    border-radius:14px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:24px;
+    font-weight:700;
+    color:var(--gold);
+    transition:.4s;
+}
+
+.logoText{
+    display:flex;
+    flex-direction:column;
+    line-height:1;
+}
+
+.logoText span{
+    font-size:23px;
+    font-weight:700;
+    letter-spacing:2px;
+}
+
+.logoText small{
+    color:var(--gold);
+    letter-spacing:5px;
+    font-size:11px;
+    margin-top:4px;
+}
+
+.logo:hover .logoIcon{
+    transform:rotate(-8deg);
+    background:var(--gold);
+    color:black;
+}
+
+/* ---------- Main nav links ---------- */
+.navbar{
+    display:flex;
+    gap:38px;
+}
+
+.navbar a{
+    position:relative;
+    font-size:16px;
+    color:#eee;
+    transition:.35s;
+}
+
+.navbar a:hover,
+.navbar a.active{
+    color:var(--gold);
+}
+
+.navbar a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-8px;
+    width:0;
+    height:2px;
+    background:var(--gold);
+    transition:.35s;
+}
+
+.navbar a:hover::after,
+.navbar a.active::after{
+    width:100%;
+}
+
+/* ---------- Icons: search / wishlist / cart / menu ---------- */
+.navIcons{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.navIcons button{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:#181818;
+    color:white;
+    border:none;
+    cursor:pointer;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    transition:.35s;
+}
+
+.navIcons button svg{
+    width:19px;
+    height:19px;
+    stroke:currentColor;
+    fill:none;
+}
+
+.navIcons button:hover{
+    background:var(--gold);
+    color:black;
+    transform:translateY(-5px);
+}
+
+.navIcons .badge{
+    position:absolute;
+    top:-6px;
+    right:-4px;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:var(--gold);
+    color:black;
+    font-size:11px;
+    font-weight:700;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* دکمه‌ی همبرگری فقط تو موبایل دیده میشه */
+.menuToggle{
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:5px;
+}
+
+.menuToggle span{
+    width:20px;
+    height:2px;
+    background:white;
+    border-radius:2px;
+    transition:.35s;
+}
+
+.menuToggle.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.menuToggle.open span:nth-child(2){ opacity:0; }
+.menuToggle.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+/* ---------- Mobile fullscreen menu ---------- */
+.mobileMenu{
+    position:fixed;
+    inset:0;
+    background:rgba(10,10,10,.97);
+    backdrop-filter:blur(18px);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:34px;
+    z-index:9998;
+    opacity:0;
+    visibility:hidden;
+    transition:.4s ease;
+}
+
+.mobileMenu.active{
+    opacity:1;
+    visibility:visible;
+}
+
+.mobileMenu a{
+    font-size:24px;
+    color:#eee;
+    opacity:0;
+    transform:translateY(15px);
+    transition:.4s ease;
+}
+
+.mobileMenu.active a{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.mobileMenu a.active{
+    color:var(--gold);
+}
+
+/* تاخیر پلکانی برای ورود لینک‌ها، حس خاص‌تر */
+.mobileMenu.active a:nth-child(1){transition-delay:.05s;}
+.mobileMenu.active a:nth-child(2){transition-delay:.1s;}
+.mobileMenu.active a:nth-child(3){transition-delay:.15s;}
+.mobileMenu.active a:nth-child(4){transition-delay:.2s;}
+.mobileMenu.active a:nth-child(5){transition-delay:.25s;}
+.mobileMenu.active a:nth-child(6){transition-delay:.3s;}
+
+/* ---------- Search overlay ---------- */
+.searchOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.92);
+    backdrop-filter:blur(18px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    opacity:0;
+    visibility:hidden;
+    transition:.45s;
+    z-index:10000;
+}
+
+.searchOverlay.active{
+    opacity:1;
+    visibility:visible;
+}
+
+.searchBox{
+    width:700px;
+    max-width:90%;
+    position:relative;
+    text-align:center;
+}
+
+.searchBox h2{
+    font-size:38px;
+    margin-bottom:35px;
+    color:#fff;
+}
+
+.searchInput{
+    display:flex;
+    overflow:hidden;
+    border-radius:60px;
+    border:2px solid rgba(255,255,255,.08);
+}
+
+.searchInput input{
+    flex:1;
+    height:72px;
+    border:none;
+    outline:none;
+    background:#181818;
+    color:white;
+    font-size:18px;
+    padding:0 25px;
+}
+
+.searchInput button{
+    width:80px;
+    background:var(--gold);
+    color:black;
+    font-size:20px;
+    border:none;
+    cursor:pointer;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:.35s;
+}
+
+.searchInput button:hover{
+    background:white;
+}
+
+.closeSearch{
+    position:absolute;
+    right:0;
+    top:-80px;
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    background:#181818;
+    color:white;
+    font-size:20px;
+    border:none;
+    cursor:pointer;
+    transition:.35s;
+}
+
+.closeSearch:hover{
+    background:var(--gold);
+    color:black;
+    transform:rotate(90deg);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px){
+
+    .navbar{ display:none; }
+
+    .menuToggle{ display:flex; }
+
+    .site-header{ padding:0 20px; }
+
+    .logoText span{ font-size:19px; }
+
+}

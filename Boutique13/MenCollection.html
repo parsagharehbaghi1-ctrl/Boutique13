@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مردانه | بوتیک ۱۳</title>
+
+    <!-- ناوبری مشترک کل سایت -->
+    <link rel="stylesheet" href="css/navbar.css">
+    <!-- استایل اختصاصی این صفحه -->
+    <link rel="stylesheet" href="MenCollection.css">
+    <link rel="stylesheet" href="css/product.css">
+    <link rel="stylesheet" href="css/search.css">
+</head>
+
+<body>
+
+    <!-- هدر و منوی موبایل توسط navbar.js به‌صورت خودکار اینجا تزریق می‌شود -->
+
+    <section class="hero" id="top">
+        <div class="overlay"></div>
+
+        <div class="heroTag" aria-hidden="true">
+            <span class="tagNo">No.</span>
+            <span class="tagNum">۱۳</span>
+            <span class="tagLine">دست‌ساز، بی‌زمان</span>
+        </div>
+
+        <div class="heroContent">
+            <span class="kicker">کالکشن پاییز / زمستان</span>
+            <h1>استایل مردانه</h1>
+            <p>سادگی، کیفیت و استایل را یکجا تجربه کن.</p>
+            <a href="#products" class="btn heroBtn">مشاهده محصولات</a>
+        </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+        <div class="marqueeTrack">
+            <span>کیفیت پارچه</span><span>•</span>
+            <span>الگوی اختصاصی</span><span>•</span>
+            <span>تولید محدود</span><span>•</span>
+            <span>بوتیک ۱۳</span><span>•</span>
+            <span>کیفیت پارچه</span><span>•</span>
+            <span>الگوی اختصاصی</span><span>•</span>
+            <span>تولید محدود</span><span>•</span>
+            <span>بوتیک ۱۳</span><span>•</span>
+        </div>
+    </div>
+
+    <!--
+    این بخش رو جایگزین بلوک خالی #categories و #products
+    توی men.html کن (همون‌جایی که الان با ::: {#products ...} :::
+    خالیه چون قبلاً قرار بود men.js پرش کنه).
+    عکس‌ها و قیمت‌ها رو از products-data.js قبلی برداشتم که
+    چیزی گم نشه.
+-->
+
+<div id="categories" class="section categories">
+
+    <button data-category="all" class="active">همه</button>
+    <button data-category="tshirt">تیشرت</button>
+    <button data-category="pants">شلوار</button>
+    <button data-category="shorts">شلوارک</button>
+    <button data-category="shoes">کفش</button>
+
+</div>
+
+<div id="products" class="section products">
+
+    <div class="product" data-id="1" data-category="tshirt">
+        <div class="productImage">
+            <img class="front" src="img/products/tshirt (3).jpg" alt="تیشرت اورسایز مشکی">
+            <img class="back"  src="img/products/tshirt (2).jpg" alt="تیشرت اورسایز مشکی">
+        </div>
+        <div class="productInfo">
+            <h3>تیشرت اورسایز مشکی</h3>
+            <p>۱,۴۹۰,۰۰۰ تومان</p>
+            <button class="viewProduct" data-product-id="1" type="button">مشاهده محصول</button>
+        </div>
+    </div>
+
+    <div class="product" data-id="2" data-category="tshirt">
+        <div class="productImage">
+            <img class="front" src="img/products/tshirt2.jpg" alt="تیشرت سفید مینیمال">
+            <img class="back"  src="img/products/tshirt2.jpg" alt="تیشرت سفید مینیمال">
+        </div>
+        <div class="productInfo">
+            <h3>تیشرت سفید مینیمال</h3>
+            <p>۱,۲۹۰,۰۰۰ تومان</p>
+            <button class="viewProduct" data-product-id="2" type="button">مشاهده محصول</button>
+        </div>
+    </div>
+
+    <div class="product" data-id="3" data-category="pants">
+        <div class="productImage">
+            <img class="front" src="img/products/pants1.jpg" alt="شلوار بگ مردانه">
+            <img class="back"  src="img/products/pants1.jpg" alt="شلوار بگ مردانه">
+        </div>
+        <div class="productInfo">
+            <h3>شلوار بگ مردانه</h3>
+            <p>۲,۱۹۰,۰۰۰ تومان</p>
+            <button class="viewProduct" data-product-id="3" type="button">مشاهده محصول</button>
+        </div>
+    </div>
+
+    <div class="product" data-id="4" data-category="shorts">
+        <div class="productImage">
+            <img class="front" src="img/products/shorts1.jpg" alt="شلوارک اسپرت">
+            <img class="back"  src="img/products/shorts1.jpg" alt="شلوارک اسپرت">
+        </div>
+        <div class="productInfo">
+            <h3>شلوارک اسپرت</h3>
+            <p>۹۹۰,۰۰۰ تومان</p>
+            <button class="viewProduct" data-product-id="4" type="button">مشاهده محصول</button>
+        </div>
+    </div>
+
+    <div class="product" data-id="5" data-category="shoes">
+        <div class="productImage">
+            <img class="front" src="img/products/shoes1.jpg" alt="کتانی سفید">
+            <img class="back"  src="img/products/shoes1.jpg" alt="کتانی سفید">
+        </div>
+        <div class="productInfo">
+            <h3>کتانی سفید</h3>
+            <p>۳,۴۹۰,۰۰۰ تومان</p>
+            <button class="viewProduct" data-product-id="5" type="button">مشاهده محصول</button>
+        </div>
+    </div>
+
+</div>
+
+
+    <footer class="siteFooter">
+        <div class="footerBrand">
+            <span class="logoIcon">B</span>
+            <div class="logoText">
+                <span>Boutique <small>13</small></span>
+            </div>
+        </div>
+        <p class="footerNote">استایل فقط لباس نیست، شخصیت توست.</p>
+        <p class="footerCopy">© بوتیک ۱۳ — تمام حقوق محفوظ است.</p>
+    </footer>
+
+    <!-- ناوبری مشترک — باید قبل از اسکریپت‌های اختصاصی صفحه لود شود -->
+    <script src="js/navbar.js"></script>
+
+    <!-- داده و منطق صفحه مردانه -->
+    <script src="js/men.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/product.js"></script>
+    <script src="js/products-data.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.viewProduct').forEach(function (button) {
+        button.addEventListener('click', function () {
+            window.location.href = 'product.html?id=' + this.dataset.productId;
+        });
+    });
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل کاربری</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1b19;
+    --paper:#f4f1ea;
+    --card:#ffffff;
+    --olive:#5f6a4c;
+    --olive-dark:#454e37;
+    --rust:#a15630;
+    --line:#d8d2c4;
+    --muted:#8a8477;
+    --panel:#20201d;
+    --amber:#b8863f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Vazirmatn', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+  }
+
+  .shell{
+    display:grid;
+    grid-template-columns:248px 1fr;
+    min-height:100vh;
+  }
+  @media (max-width:860px){
+    .shell{grid-template-columns:1fr;}
+    .sidebar{position:static; display:flex; flex-direction:row; overflow-x:auto; padding:14px 16px;}
+    .sidebar .brand, .sidebar .side-foot{display:none;}
+    .sidebar nav{flex-direction:row; gap:6px;}
+    .sidebar nav a{white-space:nowrap;}
+  }
+
+  /* ===== sidebar ===== */
+  .sidebar{
+    background:var(--panel);
+    color:var(--paper);
+    padding:28px 22px;
+    display:flex;
+    flex-direction:column;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-size:13px; letter-spacing:0.12em;
+    margin-bottom:40px;
+  }
+  .brand .sq{width:9px;height:9px;background:var(--rust); display:inline-block;}
+
+  .who{
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:30px;
+    padding-bottom:22px;
+    border-bottom:1px dashed #45443c;
+  }
+  .avatar{
+    width:42px; height:42px;
+    background:var(--rust);
+    color:var(--paper);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:15px;
+    border-radius:50%;
+    flex-shrink:0;
+  }
+  .who .name{font-size:14px; font-weight:700;}
+  .who .phone{font-size:12px; color:#a5a094; direction:ltr; text-align:right;}
+
+  .sidebar nav{display:flex; flex-direction:column; gap:2px;}
+  .sidebar nav a{
+    color:#c9c5bb;
+    text-decoration:none;
+    font-size:13.5px;
+    font-weight:600;
+    padding:11px 12px;
+    border-radius:2px;
+    display:flex; align-items:center; gap:10px;
+    transition:background .2s ease, color .2s ease;
+  }
+  .sidebar nav a .dot{
+    width:5px; height:5px;
+    border-radius:50%;
+    background:#5c584c;
+    flex-shrink:0;
+  }
+  .sidebar nav a:hover{background:#2b2a26; color:var(--paper);}
+  .sidebar nav a.active{background:var(--paper); color:var(--ink);}
+  .sidebar nav a.active .dot{background:var(--rust);}
+
+  .side-foot{
+    margin-top:auto;
+    padding-top:20px;
+  }
+  .side-foot a{
+    color:#948f81;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:600;
+  }
+  .side-foot a:hover{color:var(--paper);}
+
+  /* ===== main ===== */
+  main{padding:36px 40px 60px;}
+  @media (max-width:860px){main{padding:24px 18px 50px;}}
+
+  .page-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:30px;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .page-head .eyebrow{
+    font-size:11px; letter-spacing:0.14em; color:var(--rust); font-weight:700;
+    display:block; margin-bottom:6px;
+  }
+  .page-head h1{font-size:26px; margin:0; font-weight:700;}
+  .page-head .sub{font-size:13px; color:var(--muted); margin-top:6px;}
+
+  .stat-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-bottom:34px;
+  }
+  @media (max-width:640px){.stat-row{grid-template-columns:1fr;}}
+  .stat{
+    background:var(--card);
+    border:1px solid var(--line);
+    padding:18px 20px;
+  }
+  .stat .num{font-size:24px; font-weight:800;}
+  .stat .lbl{font-size:12.5px; color:var(--muted); margin-top:4px;}
+
+  .section-title{
+    display:flex; align-items:center; gap:12px;
+    font-size:14px; font-weight:700;
+    margin:0 0 16px;
+  }
+  .section-title::after{content:""; flex:1; height:1px; background:var(--line);}
+
+  /* ===== signature element: the order ticket ===== */
+  .tickets{display:flex; flex-direction:column; gap:18px; margin-bottom:40px;}
+
+  .ticket{
+    background:var(--card);
+    border:1px solid var(--line);
+    position:relative;
+    display:grid;
+    grid-template-columns:1fr auto;
+  }
+  @media (max-width:640px){.ticket{grid-template-columns:1fr;}}
+
+  .ticket-main{padding:20px 22px;}
+  .ticket-top{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    margin-bottom:16px;
+    gap:10px; flex-wrap:wrap;
+  }
+  .ticket-id{font-size:11.5px; color:var(--muted); letter-spacing:0.04em;}
+  .ticket-id b{color:var(--ink); font-weight:700;}
+  .ticket-date{font-size:11.5px; color:var(--muted);}
+
+  .stamp{
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:0.05em;
+    padding:5px 12px;
+    border:1.5px solid currentColor;
+    border-radius:20px;
+    transform:rotate(-2deg);
+  }
+  .stamp.processing{color:var(--amber);}
+  .stamp.shipped{color:var(--olive-dark);}
+  .stamp.delivered{color:var(--olive);}
+
+  .stitch-track{
+    display:flex; align-items:center;
+    margin:18px 0 4px;
+  }
+  .stitch-track .step{
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    position:relative; flex:1;
+  }
+  .stitch-track .step .node{
+    width:11px; height:11px; border-radius:50%;
+    background:var(--paper); border:2px solid var(--line);
+    z-index:1;
+  }
+  .stitch-track .step.done .node{background:var(--ink); border-color:var(--ink);}
+  .stitch-track .step.current .node{background:var(--rust); border-color:var(--rust);}
+  .stitch-track .step .lbl{font-size:11px; color:var(--muted); text-align:center;}
+  .stitch-track .step.done .lbl, .stitch-track .step.current .lbl{color:var(--ink); font-weight:600;}
+  .stitch-track .step::before{
+    content:"";
+    position:absolute;
+    top:5px; right:50%; left:-50%;
+    height:2px;
+    background-image:linear-gradient(to left, var(--line) 60%, transparent 40%);
+    background-size:8px 2px;
+    background-repeat:repeat-x;
+  }
+  .stitch-track .step:first-child::before{display:none;}
+  .stitch-track .step.done::before{
+    background-image:linear-gradient(to left, var(--ink) 60%, transparent 40%);
+  }
+
+  .ticket-items{font-size:12.5px; color:var(--muted); margin-top:14px;}
+  .ticket-items b{color:var(--ink); font-weight:600;}
+
+  .ticket-side{
+    border-inline-start:1px dashed var(--line);
+    padding:20px 22px;
+    display:flex; flex-direction:column;
+    align-items:flex-end;
+    justify-content:center;
+    gap:6px;
+    min-width:150px;
+    position:relative;
+  }
+  @media (max-width:640px){
+    .ticket-side{border-inline-start:none; border-top:1px dashed var(--line); align-items:flex-start; flex-direction:row; justify-content:space-between;}
+  }
+  .ticket-side::before, .ticket-side::after{
+    content:"";
+    position:absolute;
+    width:14px; height:14px;
+    background:var(--paper);
+    border-radius:50%;
+    right:-8px;
+  }
+  .ticket-side::before{top:-8px;}
+  .ticket-side::after{bottom:-8px;}
+  @media (max-width:640px){.ticket-side::before, .ticket-side::after{display:none;}}
+  .ticket-total{font-size:15px; font-weight:800;}
+  .ticket-total span{font-size:11px; color:var(--muted); font-weight:500; margin-inline-start:4px;}
+  .ticket-link{font-size:12px; color:var(--olive-dark); text-decoration:none; font-weight:700;}
+  .ticket-link:hover{text-decoration:underline;}
+
+  /* ===== two column: addresses / wishlist teaser ===== */
+  .grid-2{
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:20px;
+  }
+  @media (max-width:860px){.grid-2{grid-template-columns:1fr;}}
+
+  .panel-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    padding:22px;
+  }
+  .addr-row{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+    gap:12px;
+  }
+  .addr-row:last-child{border-bottom:none; padding-bottom:0;}
+  .addr-row:first-child{padding-top:0;}
+  .addr-tag{
+    font-size:11px; font-weight:700; color:var(--rust);
+    border:1px solid var(--rust);
+    padding:2px 8px; border-radius:20px;
+    display:inline-block; margin-bottom:6px;
+  }
+  .addr-text{font-size:13px; line-height:1.8; color:var(--ink);}
+  .addr-edit{font-size:12px; color:var(--muted); text-decoration:none; font-weight:600; flex-shrink:0;}
+  .addr-edit:hover{color:var(--ink);}
+
+  .wish-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;}
+  .wish-item{
+    aspect-ratio:3/4;
+    background:#e8e3d6;
+    position:relative;
+    display:flex; align-items:flex-end;
+    overflow:hidden;
+  }
+  .wish-item .lbl{
+    font-size:11px; color:var(--paper); background:rgba(28,27,25,0.72);
+    padding:6px 8px; width:100%;
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="brand"><span class="sq"></span> فروشگاه پوشاک</div>
+
+    <div class="who">
+      <div class="avatar">ع.ر</div>
+      <div>
+        <div class="name">علی رضایی</div>
+        <div class="phone">09123456789</div>
+      </div>
+    </div>
+
+    <nav>
+      <a href="#" class="active"><span class="dot"></span> نمای کلی</a>
+      <a href="#"><span class="dot"></span> سفارش‌ها</a>
+      <a href="#"><span class="dot"></span> آدرس‌ها</a>
+      <a href="#"><span class="dot"></span> علاقه‌مندی‌ها</a>
+      <a href="#"><span class="dot"></span> اطلاعات حساب</a>
+    </nav>
+
+    <div class="side-foot"><a href="#">خروج از حساب</a></div>
+  </aside>
+
+  <main>
+    <div class="page-head">
+      <div>
+        <span class="eyebrow">نمای کلی</span>
+        <h1>سلام، علی</h1>
+        <div class="sub">این خلاصه‌ی وضعیت حساب و سفارش‌های اخیرته</div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">۷</div><div class="lbl">سفارش تا امروز</div></div>
+      <div class="stat"><div class="num">۲</div><div class="lbl">در مسیر ارسال</div></div>
+      <div class="stat"><div class="num">۱۲</div><div class="lbl">مورد علاقه‌مندی</div></div>
+    </div>
+
+    <h2 class="section-title">سفارش‌های اخیر</h2>
+    <div class="tickets">
+
+      <!-- ticket 1 -->
+      <div class="ticket">
+        <div class="ticket-main">
+          <div class="ticket-top">
+            <div>
+              <div class="ticket-id">سفارش <b>#۱۰۴۲۸</b></div>
+              <div class="ticket-date">۱۴ مرداد ۱۴۰۴</div>
+            </div>
+            <span class="stamp shipped">ارسال شده</span>
+          </div>
+
+          <div class="stitch-track">
+            <div class="step done"><div class="node"></div><div class="lbl">ثبت سفارش</div></div>
+            <div class="step done"><div class="node"></div><div class="lbl">آماده‌سازی</div></div>
+            <div class="step current"><div class="node"></div><div class="lbl">ارسال</div></div>
+            <div class="step"><div class="node"></div><div class="lbl">تحویل</div></div>
+          </div>
+
+          <div class="ticket-items"><b>۳ قلم</b> — کاپشن جین، شلوار چینو، تیشرت بیسیک</div>
+        </div>
+        <div class="ticket-side">
+          <div class="ticket-total">۴,۲۸۰,۰۰۰<span>تومان</span></div>
+          <a class="ticket-link" href="#">پیگیری مرسوله</a>
+        </div>
+      </div>
+
+      <!-- ticket 2 -->
+      <div class="ticket">
+        <div class="ticket-main">
+          <div class="ticket-top">
+            <div>
+              <div class="ticket-id">سفارش <b>#۱۰۳۹۱</b></div>
+              <div class="ticket-date">۲ مرداد ۱۴۰۴</div>
+            </div>
+            <span class="stamp delivered">تحویل شده</span>
+          </div>
+
+          <div class="stitch-track">
+            <div class="step done"><div class="node"></div><div class="lbl">ثبت سفارش</div></div>
+            <div class="step done"><div class="node"></div><div class="lbl">آماده‌سازی</div></div>
+            <div class="step done"><div class="node"></div><div class="lbl">ارسال</div></div>
+            <div class="step done"><div class="node"></div><div class="lbl">تحویل</div></div>
+          </div>
+
+          <div class="ticket-items"><b>۱ قلم</b> — پیراهن کتان طوسی</div>
+        </div>
+        <div class="ticket-side">
+          <div class="ticket-total">۱,۱۵۰,۰۰۰<span>تومان</span></div>
+          <a class="ticket-link" href="#">ثبت نظر</a>
+        </div>
+      </div>
+
+      <!-- ticket 3 -->
+      <div class="ticket">
+        <div class="ticket-main">
+          <div class="ticket-top">
+            <div>
+              <div class="ticket-id">سفارش <b>#۱۰۴۵۰</b></div>
+              <div class="ticket-date">امروز</div>
+            </div>
+            <span class="stamp processing">در حال آماده‌سازی</span>
+          </div>
+
+          <div class="stitch-track">
+            <div class="step done"><div class="node"></div><div class="lbl">ثبت سفارش</div></div>
+            <div class="step current"><div class="node"></div><div class="lbl">آماده‌سازی</div></div>
+            <div class="step"><div class="node"></div><div class="lbl">ارسال</div></div>
+            <div class="step"><div class="node"></div><div class="lbl">تحویل</div></div>
+          </div>
+
+          <div class="ticket-items"><b>۲ قلم</b> — کت اسپرت مشکی، شلوار پارچه‌ای</div>
+        </div>
+        <div class="ticket-side">
+          <div class="ticket-total">۳,۹۰۰,۰۰۰<span>تومان</span></div>
+          <a class="ticket-link" href="#">جزئیات سفارش</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="grid-2">
+      <div class="panel-card">
+        <h2 class="section-title">آدرس‌های ذخیره‌شده</h2>
+
+        <div class="addr-row">
+          <div>
+            <span class="addr-tag">پیش‌فرض</span>
+            <div class="addr-text">تهران، خیابان ولیعصر، بالاتر از پارک وی، پلاک ۱۲، واحد ۳</div>
+          </div>
+          <a class="addr-edit" href="#">ویرایش</a>
+        </div>
+
+        <div class="addr-row">
+          <div>
+            <span class="addr-tag" style="color:var(--muted); border-color:var(--line);">محل کار</span>
+            <div class="addr-text">تهران، سعادت‌آباد، خیابان علامه، برج نگین، طبقه ۵</div>
+          </div>
+          <a class="addr-edit" href="#">ویرایش</a>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2 class="section-title">علاقه‌مندی‌ها</h2>
+        <div class="wish-grid">
+          <div class="wish-item"><div class="lbl">کاپشن بمبر</div></div>
+          <div class="wish-item"><div class="lbl">کفش چرم</div></div>
+          <div class="wish-item"><div class="lbl">پیراهن دو جیب</div></div>
+          <div class="wish-item"><div class="lbl">شلوار کتان</div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>
