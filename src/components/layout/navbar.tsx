@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { Search, Heart, ShoppingBag, Menu, X } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { Search, Heart, ShoppingBag, Menu, X, User as UserIcon, LogOut } from 'lucide-react'
 import { useCartStore } from '@/lib/stores/cart-store'
 import { useWishlistStore } from '@/lib/stores/wishlist-store'
 import { useSearchStore } from '@/lib/stores/search-store'
+import { useAuthStore } from '@/lib/stores/auth-store'
+import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 
 const navLinks = [
@@ -21,7 +23,9 @@ const navLinks = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
 
   const cartCount = useCartStore((s) => s.getCount())
   const wishCount = useWishlistStore((s) => s.items.length)
@@ -29,6 +33,8 @@ export function Navbar() {
   const openSearch = useSearchStore((s) => s.openSearch)
   const cartHydrated = useCartStore((s) => s.hydrated)
   const wishHydrated = useWishlistStore((s) => s.hydrated)
+  const { user, isAuthenticated, hydrated: authHydrated, logout } = useAuthStore()
+  const { toast } = useToast()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -39,6 +45,7 @@ export function Navbar() {
 
   useEffect(() => {
     setMobileOpen(false)
+    setUserMenuOpen(false)
   }, [pathname])
 
   // Prevent body scroll when mobile menu open
@@ -111,6 +118,56 @@ export function Navbar() {
                 <Search className="h-5 w-5" />
               </button>
 
+              {/* Account / Auth */}
+              {authHydrated && isAuthenticated ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setUserMenuOpen((v) => !v)}
+                    aria-label="حساب کاربری"
+                    className="relative flex h-11 w-11 items-center justify-center rounded-full bg-secondary hover:bg-[#D4AF37] hover:text-black transition-all hover:-translate-y-0.5"
+                  >
+                    <UserIcon className="h-5 w-5" />
+                  </button>
+                  {userMenuOpen && (
+                    <div className="absolute left-0 mt-2 w-56 rounded-xl bg-background border border-white/10 shadow-xl p-2 z-50 animate-fade-up">
+                      <div className="px-3 py-2 border-b border-white/5 mb-1">
+                        <p className="text-sm font-semibold line-clamp-1">{user?.name}</p>
+                        {user?.phone && (
+                          <p className="text-xs text-muted-foreground" dir="ltr">{user.phone}</p>
+                        )}
+                      </div>
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm hover:bg-secondary transition-colors"
+                      >
+                        <UserIcon className="h-4 w-4" />
+                        داشبورد
+                      </Link>
+                      <button
+                        onClick={() => {
+                          logout()
+                          setUserMenuOpen(false)
+                          toast({ title: 'از حساب خارج شدید' })
+                          router.push('/')
+                        }}
+                        className="flex w-full items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        خروج از حساب
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  aria-label="ورود / ثبت‌نام"
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary hover:bg-[#D4AF37] hover:text-black transition-all hover:-translate-y-0.5"
+                >
+                  <UserIcon className="h-5 w-5" />
+                </Link>
+              )}
+
               <Link
                 href="/wishlist"
                 aria-label="علاقه‌مندی‌ها"
@@ -174,18 +231,23 @@ export function Navbar() {
                 className="block py-4 text-2xl font-semibold border-b border-white/5 hover:text-[#D4AF37] transition-colors animate-fade-up"
                 style={{ animationDelay: `${navLinks.length * 50}ms` }}
               >
-                حساب کاربری
+                {authHydrated && isAuthenticated ? 'حساب کاربری' : 'ورود / ثبت‌نام'}
               </Link>
             </li>
-            <li>
-              <Link
-                href="/login"
-                className="block py-4 text-2xl font-semibold hover:text-[#D4AF37] transition-colors animate-fade-up"
-                style={{ animationDelay: `${(navLinks.length + 1) * 50}ms` }}
-              >
-                ورود / ثبت‌نام
-              </Link>
-            </li>
+            {authHydrated && isAuthenticated && (
+              <li>
+                <button
+                  onClick={() => {
+                    logout()
+                    router.push('/')
+                  }}
+                  className="block w-full text-right py-4 text-2xl font-semibold hover:text-red-400 transition-colors animate-fade-up"
+                  style={{ animationDelay: `${(navLinks.length + 1) * 50}ms` }}
+                >
+                  خروج از حساب
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       )}

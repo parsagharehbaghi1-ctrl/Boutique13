@@ -2,16 +2,20 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Phone, Lock, User, Eye, EyeOff, ArrowLeft, Check, ShieldCheck } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { useAuthStore } from '@/lib/stores/auth-store'
 import { cn } from '@/lib/utils'
 
 type Mode = 'login' | 'register' | 'otp' | 'success'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTarget = searchParams.get('redirect') || '/dashboard'
   const { toast } = useToast()
+  const login = useAuthStore((s) => s.login)
   const [mode, setMode] = useState<Mode>('login')
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
@@ -74,6 +78,11 @@ export default function LoginPage() {
       toast({ title: 'کد را کامل وارد کنید', variant: 'destructive' })
       return
     }
+    // Persist authed user to the auth store
+    login({
+      name: name.trim() || 'کاربر بوتیک ۱۳',
+      phone,
+    })
     setMode('success')
     toast({ title: 'ورود موفقیت‌آمیز بود! 🎉' })
   }
@@ -309,10 +318,10 @@ export default function LoginPage() {
                 خوش آمدید به بوتیک ۱۳. حساب شما با موفقیت تأیید شد.
               </p>
               <button
-                onClick={() => router.push('/dashboard')}
+                onClick={() => router.push(redirectTarget)}
                 className="w-full rounded-full bg-[#D4AF37] py-3.5 text-sm font-bold text-black hover:bg-[#e9cc6e] transition-colors flex items-center justify-center gap-2"
               >
-                ورود به حساب کاربری
+                {redirectTarget === '/checkout' ? 'ادامه تسویه حساب' : 'ورود به حساب کاربری'}
                 <ArrowLeft className="h-4 w-4" />
               </button>
             </div>

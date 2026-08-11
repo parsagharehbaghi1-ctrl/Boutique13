@@ -1,14 +1,18 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from 'lucide-react'
 import { useCartStore } from '@/lib/stores/cart-store'
+import { useAuthStore } from '@/lib/stores/auth-store'
 import { formatToman } from '@/lib/format'
 import { useToast } from '@/hooks/use-toast'
 
 export default function CartPage() {
+  const router = useRouter()
   const { items, updateQty, removeItem, getTotal, clearCart, hydrated } = useCartStore()
+  const { isAuthenticated, hydrated: authHydrated } = useAuthStore()
   const { toast } = useToast()
 
   const total = getTotal()
@@ -165,19 +169,37 @@ export default function CartPage() {
             </div>
             <button
               onClick={() => {
-                toast({
-                  title: 'سفارش ثبت شد! 🎉',
-                  description: 'به‌زودی با شما تماس می‌گیریم',
-                })
-                clearCart()
+                // Auth gate: if not logged in -> go to login/signup, then back to checkout
+                if (!authHydrated) {
+                  // wait for auth to hydrate to avoid wrong redirect
+                  toast({ title: 'کمی صبر کنید...' })
+                  return
+                }
+                if (!isAuthenticated) {
+                  toast({
+                    title: 'برای ادامه باید وارد شوید',
+                    description: 'به صفحه ورود منتقل می‌شوید',
+                  })
+                  router.push('/login?redirect=/checkout')
+                  return
+                }
+                // Authed -> go straight to checkout
+                router.push('/checkout')
               }}
               className="w-full rounded-full bg-[#D4AF37] py-3.5 text-sm font-bold text-black hover:bg-[#e9cc6e] transition-colors"
             >
-              ثبت سفارش
+              تسویه حساب
             </button>
-            <p className="text-xs text-muted-foreground text-center mt-3">
-              پرداخت در محل امکان‌پذیر است
-            </p>
+            {!isAuthenticated && authHydrated && (
+              <p className="text-xs text-muted-foreground text-center mt-3">
+                برای تسویه حساب ابتدا وارد حساب کاربری خود شوید
+              </p>
+            )}
+            {isAuthenticated && authHydrated && (
+              <p className="text-xs text-muted-foreground text-center mt-3">
+                پرداخت در محل امکان‌پذیر است
+              </p>
+            )}
           </div>
         </div>
       </div>
