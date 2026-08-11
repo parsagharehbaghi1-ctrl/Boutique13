@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Heart, ShoppingBag, Star, Check, ChevronLeft, Truck, ShieldCheck, RefreshCw } from 'lucide-react'
 import { useCartStore } from '@/lib/stores/cart-store'
 import { useWishlistStore } from '@/lib/stores/wishlist-store'
+import { flyToCart } from '@/lib/fly-to-cart'
 import { formatToman, CATEGORY_LABELS } from '@/lib/format'
 import type { ParsedProduct } from '@/app/api/products/route'
 import { useToast } from '@/hooks/use-toast'
@@ -29,6 +30,7 @@ export default function ProductPage({ params }: PageProps) {
   const [zoomOrigin, setZoomOrigin] = useState<{ x: number; y: number } | null>(null)
   const [adding, setAdding] = useState(false)
   const [added, setAdded] = useState(false)
+  const galleryRef = useRef<HTMLDivElement | null>(null)
 
   const addItem = useCartStore((s) => s.addItem)
   const toggleWish = useWishlistStore((s) => s.toggle)
@@ -70,6 +72,8 @@ export default function ProductPage({ params }: PageProps) {
       return
     }
     setAdding(true)
+    // Fly-to-cart animation: launch the gallery image toward the cart icon
+    flyToCart(product.images[selectedImage], galleryRef.current)
     addItem({
       id: product.id,
       name: product.name,
@@ -146,6 +150,7 @@ export default function ProductPage({ params }: PageProps) {
         {/* Gallery */}
         <div className="lg:sticky lg:top-28 lg:self-start">
           <div
+            ref={galleryRef}
             className="relative aspect-square overflow-hidden rounded-2xl bg-secondary cursor-zoom-in"
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setZoomOrigin(null)}

@@ -3,9 +3,10 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Heart, ShoppingBag } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useWishlistStore } from '@/lib/stores/wishlist-store'
 import { useCartStore } from '@/lib/stores/cart-store'
+import { flyToCart } from '@/lib/fly-to-cart'
 import { formatToman, CATEGORY_LABELS } from '@/lib/format'
 import type { ParsedProduct } from '@/app/api/products/route'
 import { useToast } from '@/hooks/use-toast'
@@ -18,6 +19,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [hovered, setHovered] = useState(false)
+  const imageWrapRef = useRef<HTMLDivElement | null>(null)
   const toggleWish = useWishlistStore((s) => s.toggle)
   const hasWish = useWishlistStore((s) => s.has(product.id))
   const addItem = useCartStore((s) => s.addItem)
@@ -29,6 +31,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    // Fly-to-cart animation: launch the product image toward the cart icon
+    flyToCart(product.images[0], imageWrapRef.current)
     addItem({
       id: product.id,
       name: product.name,
@@ -67,7 +71,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     >
       <div className="relative overflow-hidden rounded-2xl bg-secondary/40 border border-white/5 transition-all duration-500 group-hover:border-[#D4AF37]/40 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] shine-on-hover">
         {/* Image */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
+        <div ref={imageWrapRef} className="relative aspect-[3/4] overflow-hidden bg-secondary">
           <Image
             src={currentImage}
             alt={product.name}

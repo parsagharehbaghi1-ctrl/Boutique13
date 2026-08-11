@@ -182,6 +182,7 @@ export function Navbar() {
               </Link>
 
               <button
+                id="cart-button"
                 onClick={openCart}
                 aria-label="سبد خرید"
                 className="relative flex h-11 w-11 items-center justify-center rounded-full bg-secondary hover:bg-[#D4AF37] hover:text-black transition-all hover:-translate-y-0.5"
