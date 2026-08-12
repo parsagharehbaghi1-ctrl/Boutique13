@@ -19,6 +19,8 @@ interface CartState {
   isOpen: boolean
   hydrated: boolean
   addItem: (item: Omit<CartItem, 'qty'>, qty?: number) => void
+  /** Add item without opening the drawer (use with fly-to-cart animation) */
+  addItemSilent: (item: Omit<CartItem, 'qty'>, qty?: number) => void
   removeItem: (index: number) => void
   updateQty: (index: number, delta: number) => void
   clearCart: () => void
@@ -43,11 +45,23 @@ export const useCartStore = create<CartState>()(
         if (existingIndex >= 0) {
           const newItems = [...items]
           newItems[existingIndex].qty += qty
+          set({ items: newItems, isOpen: true })
+        } else {
+          set({ items: [...items, { ...item, qty }], isOpen: true })
+        }
+      },
+      addItemSilent: (item, qty = 1) => {
+        const items = get().items
+        const existingIndex = items.findIndex(
+          (i) => i.id === item.id && i.color === item.color && i.size === item.size
+        )
+        if (existingIndex >= 0) {
+          const newItems = [...items]
+          newItems[existingIndex].qty += qty
           set({ items: newItems })
         } else {
           set({ items: [...items, { ...item, qty }] })
         }
-        set({ isOpen: true })
       },
       removeItem: (index) => {
         const items = get().items
