@@ -19,30 +19,42 @@ interface ProductCardProps {
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [hovered, setHovered] = useState(false)
+  const [flying, setFlying] = useState(false)
   const imageWrapRef = useRef<HTMLDivElement | null>(null)
   const toggleWish = useWishlistStore((s) => s.toggle)
   const hasWish = useWishlistStore((s) => s.has(product.id))
-  const addItem = useCartStore((s) => s.addItem)
+  const addItemSilent = useCartStore((s) => s.addItemSilent)
+  const openCart = useCartStore((s) => s.openCart)
   const { toast } = useToast()
 
   const hasMultipleImages = product.images.length > 1
   const currentImage = hovered && hasMultipleImages ? product.images[1] : product.images[0]
 
-  const handleQuickAdd = (e: React.MouseEvent) => {
+  const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    // Fly-to-cart animation: launch the product image toward the cart icon
-    flyToCart(product.images[0], imageWrapRef.current)
-    addItem({
+    if (flying) return
+
+    setFlying(true)
+
+    // Add to cart silently (without opening drawer)
+    addItemSilent({
       id: product.id,
       name: product.name,
       price: product.price,
       image: product.images[0],
-      color: product.colors[0]?.name || 'مشکی',
+      color: product.colors[0]?.name || '\u0645\u0634\u06a9\u06cc',
       size: product.sizes[0] || 'M',
       slug: product.slug,
     })
-    toast({ title: 'به سبد خرید اضافه شد', description: product.name })
+
+    // Fly-to-cart animation: launch the product image toward the cart icon
+    await flyToCart(product.images[0], imageWrapRef.current)
+
+    // Open cart drawer after animation completes
+    openCart()
+    setFlying(false)
+    toast({ title: '\u0628\u0647 \u0633\u0628\u062f \u062e\u0631\u06cc\u062f \u0627\u0636\u0627\u0641\u0647 \u0634\u062f', description: product.name })
   }
 
   const handleWish = (e: React.MouseEvent) => {
@@ -56,7 +68,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       slug: product.slug,
     })
     toast({
-      title: added ? 'به علاقه‌مندی اضافه شد' : 'از علاقه‌مندی حذف شد',
+      title: added ? '\u0628\u0647 \u0639\u0644\u0627\u0642\u0647\u200c\u0645\u0646\u062f\u06cc \u0627\u0636\u0627\u0641\u0647 \u0634\u062f' : '\u0627\u0632 \u0639\u0644\u0627\u0642\u0647\u200c\u0645\u0646\u062f\u06cc \u062d\u0630\u0641 \u0634\u062f',
       description: product.name,
     })
   }
@@ -83,14 +95,14 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           {/* Discount badge */}
           {product.oldPrice && product.oldPrice > product.price && (
             <span className="absolute top-3 right-3 rounded-full bg-red-500 px-2.5 py-1 text-xs font-bold text-white">
-              {Math.round((1 - product.price / product.oldPrice) * 100)}٪ تخفیف
+              {Math.round((1 - product.price / product.oldPrice) * 100)}\u066a \u062a\u062e\u0641\u06cc\u0641
             </span>
           )}
 
           {/* Wishlist button */}
           <button
             onClick={handleWish}
-            aria-label="افزودن به علاقه‌مندی"
+            aria-label="\u0627\u0641\u0632\u0648\u062f\u0646 \u0628\u0647 \u0639\u0644\u0627\u0642\u0647\u200c\u0645\u0646\u062f\u06cc"
             className={cn(
               'absolute top-3 left-3 flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-md transition-all',
               hasWish
@@ -105,10 +117,16 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
             <button
               onClick={handleQuickAdd}
-              className="w-full rounded-full bg-[#D4AF37] py-3 text-sm font-bold text-black hover:bg-[#e9cc6e] transition-colors flex items-center justify-center gap-2"
+              disabled={flying}
+              className={cn(
+                'w-full rounded-full py-3 text-sm font-bold transition-colors flex items-center justify-center gap-2',
+                flying
+                  ? 'bg-[#D4AF37]/60 text-black/60 cursor-wait'
+                  : 'bg-[#D4AF37] text-black hover:bg-[#e9cc6e]'
+              )}
             >
               <ShoppingBag className="h-4 w-4" />
-              افزودن به سبد
+              {flying ? '\u062f\u0631 \u062d\u0627\u0644 \u0627\u0641\u0632\u0648\u062f\u0646...' : '\u0627\u0641\u0632\u0648\u062f\u0646 \u0628\u0647 \u0633\u0628\u062f'}
             </button>
           </div>
         </div>
