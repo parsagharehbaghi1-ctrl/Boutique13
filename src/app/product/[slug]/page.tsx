@@ -32,7 +32,8 @@ export default function ProductPage({ params }: PageProps) {
   const [added, setAdded] = useState(false)
   const galleryRef = useRef<HTMLDivElement | null>(null)
 
-  const addItem = useCartStore((s) => s.addItem)
+  const addItemSilent = useCartStore((s) => s.addItemSilent)
+  const openCart = useCartStore((s) => s.openCart)
   const toggleWish = useWishlistStore((s) => s.toggle)
   const hasWish = useWishlistStore((s) => (product ? s.has(product.id) : false))
   const { toast } = useToast()
@@ -47,6 +48,7 @@ export default function ProductPage({ params }: PageProps) {
       .then((data) => {
         setProduct(data)
         setSelectedColor(data.colors[0]?.name || null)
+        setSelectedSize(null)
         setSelectedImage(0)
       })
       .catch(() => setProduct(null))
@@ -61,20 +63,22 @@ export default function ProductPage({ params }: PageProps) {
       .catch(console.error)
   }, [slug])
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product) return
     if (!selectedColor) {
-      toast({ title: 'رنگ را انتخاب کنید', variant: 'destructive' })
+      toast({ title: '\u0631\u0646\u06af \u0631\u0627 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646\u06cc\u062f', variant: 'destructive' })
       return
     }
     if (!selectedSize) {
-      toast({ title: 'سایز را انتخاب کنید', variant: 'destructive' })
+      toast({ title: '\u0633\u0627\u06cc\u0632 \u0631\u0627 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646\u06cc\u062f', variant: 'destructive' })
       return
     }
+    if (adding) return
+
     setAdding(true)
-    // Fly-to-cart animation: launch the gallery image toward the cart icon
-    flyToCart(product.images[selectedImage], galleryRef.current)
-    addItem({
+
+    // Add to cart silently (without opening drawer yet)
+    addItemSilent({
       id: product.id,
       name: product.name,
       price: product.price,
@@ -83,9 +87,15 @@ export default function ProductPage({ params }: PageProps) {
       size: selectedSize,
       slug: product.slug,
     })
+
+    // Fly-to-cart animation: launch the gallery image toward the cart icon
+    await flyToCart(product.images[selectedImage], galleryRef.current)
+
+    // Open cart drawer after animation completes
+    openCart()
     setAdding(false)
     setAdded(true)
-    toast({ title: 'به سبد خرید اضافه شد', description: product.name })
+    toast({ title: '\u0628\u0647 \u0633\u0628\u062f \u062e\u0631\u06cc\u062f \u0627\u0636\u0627\u0641\u0647 \u0634\u062f', description: product.name })
     setTimeout(() => setAdded(false), 1600)
   }
 
@@ -99,7 +109,7 @@ export default function ProductPage({ params }: PageProps) {
       slug: product.slug,
     })
     toast({
-      title: addedNow ? 'به علاقه‌مندی اضافه شد' : 'از علاقه‌مندی حذف شد',
+      title: addedNow ? '\u0628\u0647 \u0639\u0644\u0627\u0642\u0647\u200c\u0645\u0646\u062f\u06cc \u0627\u0636\u0627\u0641\u0647 \u0634\u062f' : '\u0627\u0632 \u0639\u0644\u0627\u0642\u0647\u200c\u0645\u0646\u062f\u06cc \u062d\u0630\u0641 \u0634\u062f',
       description: product.name,
     })
   }
@@ -122,14 +132,14 @@ export default function ProductPage({ params }: PageProps) {
   if (!product) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center">
-        <div className="text-6xl mb-4">😕</div>
-        <h1 className="text-2xl font-bold mb-2">محصول پیدا نشد</h1>
-        <p className="text-muted-foreground mb-6">محصول مورد نظر شما وجود ندارد</p>
+        <div className="text-6xl mb-4">\ud83d\ude15</div>
+        <h1 className="text-2xl font-bold mb-2">\u0645\u062d\u0635\u0648\u0644 \u067e\u06cc\u062f\u0627 \u0646\u0634\u062f</h1>
+        <p className="text-muted-foreground mb-6">\u0645\u062d\u0635\u0648\u0644 \u0645\u0648\u0631\u062f \u0646\u0638\u0631 \u0634\u0645\u0627 \u0648\u062c\u0648\u062f \u0646\u062f\u0627\u0631\u062f</p>
         <Link
           href="/shop"
           className="rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-black hover:bg-[#e9cc6e] transition-colors"
         >
-          بازگشت به فروشگاه
+          \u0628\u0627\u0632\u06af\u0634\u062a \u0628\u0647 \u0641\u0631\u0648\u0634\u06af\u0627\u0647
         </Link>
       </div>
     )
@@ -139,9 +149,9 @@ export default function ProductPage({ params }: PageProps) {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
-        <Link href="/" className="hover:text-[#D4AF37]">خانه</Link>
+        <Link href="/" className="hover:text-[#D4AF37]">\u062e\u0627\u0646\u0647</Link>
         <ChevronLeft className="h-4 w-4" />
-        <Link href="/shop" className="hover:text-[#D4AF37]">فروشگاه</Link>
+        <Link href="/shop" className="hover:text-[#D4AF37]">\u0641\u0631\u0648\u0634\u06af\u0627\u0647</Link>
         <ChevronLeft className="h-4 w-4" />
         <span className="text-foreground">{product.name}</span>
       </nav>
@@ -202,7 +212,7 @@ export default function ProductPage({ params }: PageProps) {
               ))}
             </div>
             <span className="text-sm text-muted-foreground persian-num">
-              ({product.reviewCount.toLocaleString('fa-IR')} نظر)
+              ({product.reviewCount.toLocaleString('fa-IR')} \u0646\u0638\u0631)
             </span>
           </div>
 
@@ -222,7 +232,7 @@ export default function ProductPage({ params }: PageProps) {
 
           {/* Sizes */}
           <div className="mb-6">
-            <h3 className="font-semibold mb-3">انتخاب سایز</h3>
+            <h3 className="font-semibold mb-3">\u0627\u0646\u062a\u062e\u0627\u0628 \u0633\u0627\u06cc\u0632</h3>
             <div className="flex flex-wrap gap-2">
               {product.sizes.map((size) => (
                 <button
@@ -243,7 +253,7 @@ export default function ProductPage({ params }: PageProps) {
 
           {/* Colors */}
           <div className="mb-8">
-            <h3 className="font-semibold mb-3">رنگ</h3>
+            <h3 className="font-semibold mb-3">\u0631\u0646\u06af</h3>
             <div className="flex flex-wrap gap-3">
               {product.colors.map((color) => (
                 <button
@@ -276,24 +286,31 @@ export default function ProductPage({ params }: PageProps) {
                 'flex-1 h-14 rounded-full font-bold transition-all flex items-center justify-center gap-2',
                 added
                   ? 'bg-green-500 text-white'
-                  : 'bg-[#D4AF37] text-black hover:bg-[#e9cc6e] hover:-translate-y-0.5'
+                  : adding
+                    ? 'bg-[#D4AF37]/60 text-black/60 cursor-wait'
+                    : 'bg-[#D4AF37] text-black hover:bg-[#e9cc6e] hover:-translate-y-0.5'
               )}
             >
               {added ? (
                 <>
                   <Check className="h-5 w-5" />
-                  افزوده شد
+                  \u0627\u0641\u0632\u0648\u062f\u0647 \u0634\u062f
+                </>
+              ) : adding ? (
+                <>
+                  <ShoppingBag className="h-5 w-5 animate-pulse" />
+                  \u062f\u0631 \u062d\u0627\u0644 \u0627\u0641\u0632\u0648\u062f\u0646...
                 </>
               ) : (
                 <>
                   <ShoppingBag className="h-5 w-5" />
-                  افزودن به سبد خرید
+                  \u0627\u0641\u0632\u0648\u062f\u0646 \u0628\u0647 \u0633\u0628\u062f \u062e\u0631\u06cc\u062f
                 </>
               )}
             </button>
             <button
               onClick={handleWish}
-              aria-label="افزودن به علاقه‌مندی"
+              aria-label="\u0627\u0641\u0632\u0648\u062f\u0646 \u0628\u0647 \u0639\u0644\u0627\u0642\u0647\u200c\u0645\u0646\u062f\u06cc"
               className={cn(
                 'h-14 w-14 shrink-0 rounded-full border-2 flex items-center justify-center transition-all',
                 hasWish
@@ -309,15 +326,15 @@ export default function ProductPage({ params }: PageProps) {
           <div className="grid grid-cols-3 gap-3 pt-6 border-t border-white/5">
             <div className="flex flex-col items-center text-center gap-1">
               <Truck className="h-6 w-6 text-[#D4AF37]" />
-              <span className="text-xs text-muted-foreground">ارسال سریع</span>
+              <span className="text-xs text-muted-foreground">\u0627\u0631\u0633\u0627\u0644 \u0633\u0631\u06cc\u0639</span>
             </div>
             <div className="flex flex-col items-center text-center gap-1">
               <ShieldCheck className="h-6 w-6 text-[#D4AF37]" />
-              <span className="text-xs text-muted-foreground">ضمانت اصالت</span>
+              <span className="text-xs text-muted-foreground">\u0636\u0645\u0627\u0646\u062a \u0627\u0635\u0627\u0644\u062a</span>
             </div>
             <div className="flex flex-col items-center text-center gap-1">
               <RefreshCw className="h-6 w-6 text-[#D4AF37]" />
-              <span className="text-xs text-muted-foreground">بازگشت ۷ روزه</span>
+              <span className="text-xs text-muted-foreground">\u0628\u0627\u0632\u06af\u0634\u062a \u06f7 \u0631\u0648\u0632\u0647</span>
             </div>
           </div>
         </div>
@@ -326,7 +343,7 @@ export default function ProductPage({ params }: PageProps) {
       {/* Related products */}
       {related.length > 0 && (
         <section className="mt-20">
-          <h2 className="text-2xl font-bold mb-8">محصولات مرتبط</h2>
+          <h2 className="text-2xl font-bold mb-8">\u0645\u062d\u0635\u0648\u0644\u0627\u062a \u0645\u0631\u062a\u0628\u0637</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {related.map((p, i) => (
               <ProductCard key={p.id} product={p} index={i} />
