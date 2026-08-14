@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Phone, Lock, User, Eye, EyeOff, ArrowLeft, Check, ShieldCheck } from 'lucide-react'
@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 type Mode = 'login' | 'register' | 'otp' | 'success'
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTarget = searchParams.get('redirect') || '/dashboard'
@@ -41,19 +41,19 @@ export default function LoginPage() {
     e.preventDefault()
     if (mode === 'login' || mode === 'register') {
       if (!validatePhone(phone)) {
-        toast({ title: 'شماره موبایل نامعتبر است', variant: 'destructive' })
+        toast({ title: '\u0634\u0645\u0627\u0631\u0647 \u0645\u0648\u0628\u0627\u06cc\u0644 \u0646\u0627\u0645\u0639\u062a\u0628\u0631 \u0627\u0633\u062a', variant: 'destructive' })
         return
       }
       if (password.length < 8) {
-        toast({ title: 'رمز عبور حداقل ۸ کاراکتر', variant: 'destructive' })
+        toast({ title: '\u0631\u0645\u0632 \u0639\u0628\u0648\u0631 \u062d\u062f\u0627\u0642\u0644 \u06f8 \u06a9\u0627\u0631\u0627\u06a9\u062a\u0631', variant: 'destructive' })
         return
       }
       if (mode === 'register' && !name.trim()) {
-        toast({ title: 'نام را وارد کنید', variant: 'destructive' })
+        toast({ title: '\u0646\u0627\u0645 \u0631\u0627 \u0648\u0627\u0631\u062f \u06a9\u0646\u06cc\u062f', variant: 'destructive' })
         return
       }
       setMode('otp')
-      toast({ title: 'کد تأیید ارسال شد', description: `کد به شماره ${phone} پیامک شد` })
+      toast({ title: '\u06a9\u062f \u062a\u0623\u06cc\u06cc\u062f \u0627\u0631\u0633\u0627\u0644 \u0634\u062f', description: `\u06a9\u062f \u0628\u0647 \u0634\u0645\u0627\u0631\u0647 ${phone} \u067e\u06cc\u0627\u0645\u06a9 \u0634\u062f` })
     }
   }
 
@@ -75,22 +75,22 @@ export default function LoginPage() {
 
   const verifyOtp = () => {
     if (otp.some((d) => !d)) {
-      toast({ title: 'کد را کامل وارد کنید', variant: 'destructive' })
+      toast({ title: '\u06a9\u062f \u0631\u0627 \u06a9\u0627\u0645\u0644 \u0648\u0627\u0631\u062f \u06a9\u0646\u06cc\u062f', variant: 'destructive' })
       return
     }
     // Persist authed user to the auth store
     login({
-      name: name.trim() || 'کاربر بوتیک ۱۳',
+      name: name.trim() || '\u06a9\u0627\u0631\u0628\u0631 \u0628\u0648\u062a\u06cc\u06a9 \u06f1\u06f3',
       phone,
     })
     setMode('success')
-    toast({ title: 'ورود موفقیت‌آمیز بود! 🎉' })
+    toast({ title: '\u0648\u0631\u0648\u062f \u0645\u0648\u0641\u0642\u06cc\u062a\u200c\u0622\u0645\u06cc\u0632 \u0628\u0648\u062f! \ud83c\udf89' })
   }
 
   const formatTimer = (s: number) => {
     const m = Math.floor(s / 60)
     const sec = s % 60
-    return `${m.toLocaleString('fa-IR')}:${sec.toString().padStart(2, '0').replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[+d])}`
+    return `${m.toLocaleString('fa-IR')}:${sec.toString().padStart(2, '0').replace(/\d/g, (d) => '\u06f0\u06f1\u06f2\u06f3\u06f4\u06f5\u06f6\u06f7\u06f8\u06f9'[+d])}`
   }
 
   return (
@@ -106,20 +106,20 @@ export default function LoginPage() {
               <span className="text-2xl font-bold text-[#D4AF37]">13</span>
             </div>
           </Link>
-          <p className="text-sm text-[#D4AF37] tracking-widest mb-4">PRIVATE ACCESS · ۰۱۳</p>
+          <p className="text-sm text-[#D4AF37] tracking-widest mb-4">PRIVATE ACCESS \u00b7 \u06f0\u06f1\u06f3</p>
           <h2 className="text-4xl font-bold leading-tight mb-4">
-            یک حساب،
+            \u06cc\u06a9 \u062d\u0633\u0627\u0628\u060c
             <br />
-            یک اندازه‌ی درست.
+            \u06cc\u06a9 \u0627\u0646\u062f\u0627\u0632\u0647\u200c\u06cc \u062f\u0631\u0633\u062a.
           </h2>
           <p className="text-muted-foreground leading-8 max-w-md">
-            سایزها، سفارش‌ها و علاقه‌مندی‌های شما همیشه همراه‌تان می‌ماند. کافیه
-            یک‌بار وارد بشید.
+            \u0633\u0627\u06cc\u0632\u0647\u0627\u060c \u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627 \u0648 \u0639\u0644\u0627\u0642\u0647\u200c\u0645\u0646\u062f\u06cc\u200c\u0647\u0627\u06cc \u0634\u0645\u0627 \u0647\u0645\u06cc\u0634\u0647 \u0647\u0645\u0631\u0627\u0647\u200c\u062a\u0627\u0646 \u0645\u06cc\u200c\u0645\u0627\u0646\u062f. \u06a9\u0627\u0641\u06cc\u0647
+            \u06cc\u06a9\u200c\u0628\u0627\u0631 \u0648\u0627\u0631\u062f \u0628\u0634\u06cc\u062f.
           </p>
         </div>
         <div className="relative flex items-center gap-2 text-sm text-muted-foreground">
           <ShieldCheck className="h-5 w-5 text-[#D4AF37]" />
-          کمتر از ۲ دقیقه زمان می‌برد
+          \u06a9\u0645\u062a\u0631 \u0627\u0632 \u06f2 \u062f\u0642\u06cc\u0642\u0647 \u0632\u0645\u0627\u0646 \u0645\u06cc\u200c\u0628\u0631\u062f
         </div>
       </div>
 
@@ -146,7 +146,7 @@ export default function LoginPage() {
                     mode === 'login' ? 'bg-[#D4AF37] text-black' : 'text-muted-foreground'
                   )}
                 >
-                  ورود
+                  \u0648\u0631\u0648\u062f
                 </button>
                 <button
                   onClick={() => setMode('register')}
@@ -155,30 +155,30 @@ export default function LoginPage() {
                     mode === 'register' ? 'bg-[#D4AF37] text-black' : 'text-muted-foreground'
                   )}
                 >
-                  ثبت‌نام
+                  \u062b\u0628\u062a\u200c\u0646\u0627\u0645
                 </button>
               </div>
 
               <h1 className="text-3xl font-bold mb-2">
-                {mode === 'login' ? 'ورود به حساب' : 'ساخت حساب جدید'}
+                {mode === 'login' ? '\u0648\u0631\u0648\u062f \u0628\u0647 \u062d\u0633\u0627\u0628' : '\u0633\u0627\u062e\u062a \u062d\u0633\u0627\u0628 \u062c\u062f\u06cc\u062f'}
               </h1>
               <p className="text-muted-foreground mb-8">
                 {mode === 'login'
-                  ? 'خوش آمدید! وارد شوید تا ادامه دهید.'
-                  : 'به خانواده بوتیک ۱۳ بپیوندید.'}
+                  ? '\u062e\u0648\u0634 \u0622\u0645\u062f\u06cc\u062f! \u0648\u0627\u0631\u062f \u0634\u0648\u06cc\u062f \u062a\u0627 \u0627\u062f\u0627\u0645\u0647 \u062f\u0647\u06cc\u062f.'
+                  : '\u0628\u0647 \u062e\u0627\u0646\u0648\u0627\u062f\u0647 \u0628\u0648\u062a\u06cc\u06a9 \u06f1\u06f3 \u0628\u067e\u06cc\u0648\u0646\u062f\u06cc\u062f.'}
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 {mode === 'register' && (
                   <div>
-                    <label className="block text-sm font-medium mb-2">نام و نام خانوادگی</label>
+                    <label className="block text-sm font-medium mb-2">\u0646\u0627\u0645 \u0648 \u0646\u0627\u0645 \u062e\u0627\u0646\u0648\u0627\u062f\u06af\u06cc</label>
                     <div className="relative">
                       <User className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="مثلاً علی رضایی"
+                        placeholder="\u0645\u062b\u0644\u0627\u064b \u0639\u0644\u06cc \u0631\u0636\u0627\u06cc\u06cc"
                         className="w-full rounded-xl bg-secondary border border-white/10 pr-11 pl-4 py-3.5 text-sm outline-none focus:border-[#D4AF37] transition-colors"
                       />
                     </div>
@@ -186,7 +186,7 @@ export default function LoginPage() {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">شماره موبایل</label>
+                  <label className="block text-sm font-medium mb-2">\u0634\u0645\u0627\u0631\u0647 \u0645\u0648\u0628\u0627\u06cc\u0644</label>
                   <div className="relative">
                     <Phone className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <input
@@ -201,20 +201,20 @@ export default function LoginPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">رمز عبور</label>
+                  <label className="block text-sm font-medium mb-2">\u0631\u0645\u0632 \u0639\u0628\u0648\u0631</label>
                   <div className="relative">
                     <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="حداقل ۸ کاراکتر"
+                      placeholder="\u062d\u062f\u0627\u0642\u0644 \u06f8 \u06a9\u0627\u0631\u0627\u06a9\u062a\u0631"
                       className="w-full rounded-xl bg-secondary border border-white/10 pr-11 pl-11 py-3.5 text-sm outline-none focus:border-[#D4AF37] transition-colors"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((v) => !v)}
-                      aria-label="نمایش رمز"
+                      aria-label="\u0646\u0645\u0627\u06cc\u0634 \u0631\u0645\u0632"
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -226,10 +226,10 @@ export default function LoginPage() {
                   <div className="flex items-center justify-between text-sm">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" className="rounded border-white/20 bg-secondary" />
-                      <span className="text-muted-foreground">مرا به خاطر بسپار</span>
+                      <span className="text-muted-foreground">\u0645\u0631\u0627 \u0628\u0647 \u062e\u0627\u0637\u0631 \u0628\u0633\u067e\u0627\u0631</span>
                     </label>
                     <button type="button" className="text-[#D4AF37] hover:underline">
-                      فراموشی رمز؟
+                      \u0641\u0631\u0627\u0645\u0648\u0634\u06cc \u0631\u0645\u0632\u061f
                     </button>
                   </div>
                 )}
@@ -238,13 +238,13 @@ export default function LoginPage() {
                   type="submit"
                   className="w-full rounded-full bg-[#D4AF37] py-3.5 text-sm font-bold text-black hover:bg-[#e9cc6e] transition-colors flex items-center justify-center gap-2"
                 >
-                  {mode === 'login' ? 'ورود به حساب' : 'دریافت کد تأیید'}
+                  {mode === 'login' ? '\u0648\u0631\u0648\u062f \u0628\u0647 \u062d\u0633\u0627\u0628' : '\u062f\u0631\u06cc\u0627\u0641\u062a \u06a9\u062f \u062a\u0623\u06cc\u06cc\u062f'}
                   <ArrowLeft className="h-4 w-4" />
                 </button>
               </form>
 
               <p className="text-center text-sm text-muted-foreground mt-6">
-                با ورود، قوانین و حریم خصوصی بوتیک ۱۳ را می‌پذیرید.
+                \u0628\u0627 \u0648\u0631\u0648\u062f\u060c \u0642\u0648\u0627\u0646\u06cc\u0646 \u0648 \u062d\u0631\u06cc\u0645 \u062e\u0635\u0648\u0635\u06cc \u0628\u0648\u062a\u06cc\u06a9 \u06f1\u06f3 \u0631\u0627 \u0645\u06cc\u200c\u067e\u0630\u06cc\u0631\u06cc\u062f.
               </p>
             </div>
           )}
@@ -257,11 +257,11 @@ export default function LoginPage() {
                 className="text-sm text-muted-foreground hover:text-[#D4AF37] mb-6 flex items-center gap-1"
               >
                 <ArrowLeft className="h-4 w-4 rotate-180" />
-                ویرایش شماره
+                \u0648\u06cc\u0631\u0627\u06cc\u0634 \u0634\u0645\u0627\u0631\u0647
               </button>
-              <h1 className="text-3xl font-bold mb-2">تأیید کد</h1>
+              <h1 className="text-3xl font-bold mb-2">\u062a\u0623\u06cc\u06cc\u062f \u06a9\u062f</h1>
               <p className="text-muted-foreground mb-8">
-                کد ۵ رقمی به شماره <span dir="ltr" className="text-foreground font-semibold">{phone}</span> پیامک شد.
+                \u06a9\u062f \u06f5 \u0631\u0642\u0645\u06cc \u0628\u0647 \u0634\u0645\u0627\u0631\u0647 <span dir="ltr" className="text-foreground font-semibold">{phone}</span> \u067e\u06cc\u0627\u0645\u06a9 \u0634\u062f.
               </p>
 
               <div className="flex gap-3 justify-center mb-8" dir="ltr">
@@ -284,23 +284,23 @@ export default function LoginPage() {
                 onClick={verifyOtp}
                 className="w-full rounded-full bg-[#D4AF37] py-3.5 text-sm font-bold text-black hover:bg-[#e9cc6e] transition-colors mb-4"
               >
-                تأیید و ورود
+                \u062a\u0623\u06cc\u06cc\u062f \u0648 \u0648\u0631\u0648\u062f
               </button>
 
               <div className="text-center text-sm">
                 {resendTimer > 0 ? (
                   <p className="text-muted-foreground">
-                    ارسال مجدد کد تا <span className="persian-num">{formatTimer(resendTimer)}</span>
+                    \u0627\u0631\u0633\u0627\u0644 \u0645\u062c\u062f\u062f \u06a9\u062f \u062a\u0627 <span className="persian-num">{formatTimer(resendTimer)}</span>
                   </p>
                 ) : (
                   <button
                     onClick={() => {
                       setResendTimer(119)
-                      toast({ title: 'کد جدید ارسال شد' })
+                      toast({ title: '\u06a9\u062f \u062c\u062f\u06cc\u062f \u0627\u0631\u0633\u0627\u0644 \u0634\u062f' })
                     }}
                     className="text-[#D4AF37] hover:underline"
                   >
-                    ارسال مجدد کد
+                    \u0627\u0631\u0633\u0627\u0644 \u0645\u062c\u062f\u062f \u06a9\u062f
                   </button>
                 )}
               </div>
@@ -313,15 +313,15 @@ export default function LoginPage() {
               <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-green-500/10">
                 <Check className="h-12 w-12 text-green-400" />
               </div>
-              <h1 className="text-3xl font-bold mb-2">ورود موفقیت‌آمیز بود!</h1>
+              <h1 className="text-3xl font-bold mb-2">\u0648\u0631\u0648\u062f \u0645\u0648\u0641\u0642\u06cc\u062a\u200c\u0622\u0645\u06cc\u0632 \u0628\u0648\u062f!</h1>
               <p className="text-muted-foreground mb-8">
-                خوش آمدید به بوتیک ۱۳. حساب شما با موفقیت تأیید شد.
+                \u062e\u0648\u0634 \u0622\u0645\u062f\u06cc\u062f \u0628\u0647 \u0628\u0648\u062a\u06cc\u06a9 \u06f1\u06f3. \u062d\u0633\u0627\u0628 \u0634\u0645\u0627 \u0628\u0627 \u0645\u0648\u0641\u0642\u06cc\u062a \u062a\u0623\u06cc\u06cc\u062f \u0634\u062f.
               </p>
               <button
                 onClick={() => router.push(redirectTarget)}
                 className="w-full rounded-full bg-[#D4AF37] py-3.5 text-sm font-bold text-black hover:bg-[#e9cc6e] transition-colors flex items-center justify-center gap-2"
               >
-                {redirectTarget === '/checkout' ? 'ادامه تسویه حساب' : 'ورود به حساب کاربری'}
+                {redirectTarget === '/checkout' ? '\u0627\u062f\u0627\u0645\u0647 \u062a\u0633\u0648\u06cc\u0647 \u062d\u0633\u0627\u0628' : '\u0648\u0631\u0648\u062f \u0628\u0647 \u062d\u0633\u0627\u0628 \u06a9\u0627\u0631\u0628\u0631\u06cc'}
                 <ArrowLeft className="h-4 w-4" />
               </button>
             </div>
@@ -329,5 +329,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center"><div className="h-10 w-10 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" /></div>}>
+      <LoginContent />
+    </Suspense>
   )
 }
