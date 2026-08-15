@@ -209,7 +209,7 @@ export default function ContactPage() {
               className="social-ig group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:scale-105 transition-all"
             >
               <Instagram className="h-7 w-7 text-[#D4AF37] transition-colors" />
-              <span className="text-xs">اینستاگرام</span>
+              <span className="social-label text-xs">اینستاگرام</span>
             </a>
             <a
               href="#"
@@ -217,7 +217,7 @@ export default function ContactPage() {
               className="social-tg group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:scale-105 transition-all"
             >
               <Send className="h-7 w-7 text-[#D4AF37] transition-colors" />
-              <span className="text-xs">تلگرام</span>
+              <span className="social-label text-xs">تلگرام</span>
             </a>
             <a
               href="#"
@@ -225,7 +225,7 @@ export default function ContactPage() {
               className="social-wa group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:scale-105 transition-all"
             >
               <MessageCircle className="h-7 w-7 text-[#D4AF37] transition-colors" />
-              <span className="text-xs">واتساپ</span>
+              <span className="social-label text-xs">واتساپ</span>
             </a>
             <a
               href="#"

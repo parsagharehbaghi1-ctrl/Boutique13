@@ -4,21 +4,12 @@ import { Instagram, Send, MessageCircle, MapPin } from 'lucide-react'
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-white/5 bg-[#070707]">
-      {/* Instagram full-spectrum gradient definition + hover style.
-          Injected as an inline <style> so the url(#ig-gradient) SVG fragment
-          reference is preserved (Tailwind 4 / Lightning CSS drops it in globals.css). */}
-      <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="ig-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#feda75" />
-            <stop offset="25%" stopColor="#fa7e1e" />
-            <stop offset="50%" stopColor="#d62976" />
-            <stop offset="75%" stopColor="#962fbf" />
-            <stop offset="100%" stopColor="#4f5bd5" />
-          </linearGradient>
-        </defs>
-      </svg>
-      <style dangerouslySetInnerHTML={{ __html: `.social-ig svg,.social-tg svg,.social-wa svg{transition:color .25s ease,stroke .25s ease,transform .25s ease}.social-ig:hover svg{stroke:url(#ig-gradient)}.social-tg:hover svg{color:#229ED9}.social-wa:hover svg{color:#25D366}` }} />
+      {/* App-icon style hover for social links.
+          On hover the container fills with the brand color/gradient and the
+          icon turns white — like the real app icons. Injected as an inline
+          <style> so it stays unlayered and wins the cascade over Tailwind
+          utilities and the .glass class. */}
+      <style dangerouslySetInnerHTML={{ __html: `.social-ig,.social-tg,.social-wa{transition:background .3s ease,color .3s ease,stroke .3s ease,box-shadow .3s ease}.social-ig:hover{background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);box-shadow:0 6px 22px rgba(214,41,118,.45)}.social-tg:hover{background:#229ED9;box-shadow:0 6px 22px rgba(34,158,217,.45)}.social-wa:hover{background:#25D366;box-shadow:0 6px 22px rgba(37,211,102,.45)}.social-ig:hover svg,.social-tg:hover svg,.social-wa:hover svg{color:#fff;stroke:#fff}.social-ig:hover .social-label,.social-tg:hover .social-label,.social-wa:hover .social-label{color:#fff}` }} />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -40,21 +31,21 @@ export function Footer() {
               <a
                 href="#"
                 aria-label="اینستاگرام"
-                className="social-ig group flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground hover:scale-110 transition-all"
+                className="social-ig group flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-muted-foreground hover:scale-110 transition-all"
               >
                 <Instagram className="h-5 w-5 transition-colors" />
               </a>
               <a
                 href="#"
                 aria-label="تلگرام"
-                className="social-tg group flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground hover:scale-110 transition-all"
+                className="social-tg group flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-muted-foreground hover:scale-110 transition-all"
               >
                 <Send className="h-5 w-5 transition-colors" />
               </a>
               <a
                 href="#"
                 aria-label="واتساپ"
-                className="social-wa group flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground hover:scale-110 transition-all"
+                className="social-wa group flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-muted-foreground hover:scale-110 transition-all"
               >
                 <MessageCircle className="h-5 w-5 transition-colors" />
               </a>
