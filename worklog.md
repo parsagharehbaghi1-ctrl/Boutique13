@@ -1196,3 +1196,23 @@ Stage Summary:
 - 8 products seeded in database with real images
 - Lint passes clean, dev server runs on port 3000 with no errors
 - All API routes functional (products, search, contact)
+
+---
+Task ID: social-hover
+Agent: main (Z.ai Code)
+Task: Make social media icons turn to each platform's brand color on hover (Telegram -> blue, WhatsApp -> green, Instagram -> full-spectrum gradient), in both the footer and the contact page.
+
+Work Log:
+- Read footer.tsx and contact/page.tsx to understand current social icon markup (all hovered to gold #D4AF37).
+- Added an inline <linearGradient id="ig-gradient"> def (yellow #feda75 -> orange #fa7e1e -> pink #d62976 -> purple #962fbf -> blue #4f5bd5) inside the footer SVG.
+- Added an inline <style> tag in the footer with hover rules: .social-ig:hover svg { stroke: url(#ig-gradient) }, .social-tg:hover svg { color:#229ED9 }, .social-wa:hover svg { color:#25D366 }.
+- Footer: assigned social-ig / social-tg / social-wa classes to the three <a> icons (removed hover:text-[#D4AF37]).
+- Contact page: assigned the same classes to the large social cards; removed group-hover:text-[...] from the icons (icon color now driven by the inline style).
+- Discovered Tailwind 4 / Lightning CSS drops url(#id) SVG fragment references in globals.css, and layered hover: utilities get overridden by unlayered base color rules. Solved by injecting CSS via an inline <style> tag (unlayered -> highest cascade priority).
+- Verified with Agent Browser + VLM: footer Instagram->gradient, Telegram->blue, WhatsApp->green (others stay gray); contact page same (others stay gold).
+- Committed and pushed to both main and master branches (df01ac1..66bd18d).
+
+Stage Summary:
+- Social icons now show brand-accurate hover colors site-wide (footer + contact).
+- Instagram hover = full-spectrum SVG gradient stroke; Telegram = #229ED9; WhatsApp = #25D366.
+- Key technical learning: in this Tailwind 4 setup, custom CSS containing url(#id) references must be delivered via an inline <style> tag (not globals.css), because Lightning CSS strips them during compilation.
