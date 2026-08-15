@@ -206,31 +206,31 @@ export default function ContactPage() {
             <a
               href="#"
               aria-label="اینستاگرام"
-              className="group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:bg-[#D4AF37] transition-all"
+              className="social-ig group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:scale-105 transition-all"
             >
-              <Instagram className="h-7 w-7 text-[#D4AF37] group-hover:text-black" />
-              <span className="text-xs group-hover:text-black">اینستاگرام</span>
+              <Instagram className="h-7 w-7 text-[#D4AF37] transition-colors" />
+              <span className="text-xs">اینستاگرام</span>
             </a>
             <a
               href="#"
               aria-label="تلگرام"
-              className="group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:bg-[#229ED9] transition-all"
+              className="social-tg group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:scale-105 transition-all"
             >
-              <Send className="h-7 w-7 text-[#D4AF37] group-hover:text-white" />
-              <span className="text-xs group-hover:text-white">تلگرام</span>
+              <Send className="h-7 w-7 text-[#D4AF37] transition-colors" />
+              <span className="text-xs">تلگرام</span>
             </a>
             <a
               href="#"
               aria-label="واتساپ"
-              className="group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:bg-[#25D366] transition-all"
+              className="social-wa group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:scale-105 transition-all"
             >
-              <MessageCircle className="h-7 w-7 text-[#D4AF37] group-hover:text-black" />
-              <span className="text-xs group-hover:text-black">واتساپ</span>
+              <MessageCircle className="h-7 w-7 text-[#D4AF37] transition-colors" />
+              <span className="text-xs">واتساپ</span>
             </a>
             <a
               href="#"
               aria-label="روبیكا"
-              className="group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:bg-[#074a75] transition-all overflow-hidden"
+              className="group glass rounded-2xl w-28 h-28 flex flex-col items-center justify-center gap-2 hover:border-[#074a75]/40 hover:bg-[#074a75]/10 hover:scale-105 transition-all overflow-hidden"
             >
               <Image
                 src="/images/rubika.jpg"
@@ -239,7 +239,7 @@ export default function ContactPage() {
                 height={28}
                 className="rounded group-hover:opacity-80 h-7 w-7 object-contain"
               />
-              <span className="text-xs group-hover:text-white">روبیكا</span>
+              <span className="text-xs">روبیكا</span>
             </a>
           </div>
         </div>
